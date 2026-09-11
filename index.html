@@ -1,0 +1,1546 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#102c36" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <title>Chaaya Kada - Radio</title>
+  <meta
+    name="description"
+    content="One shared Malayalam nostalgia station for the 80s, 90s and 2000s, powered by the official YouTube player."
+  />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Anek+Malayalam:wght@400;600;700&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    :root {
+      --cream: #fff7de;
+      --cream-soft: rgba(255, 247, 222, 0.72);
+      --glass: rgba(15, 26, 25, 0.72);
+      --glass-strong: rgba(10, 22, 22, 0.9);
+      --line: rgba(255, 247, 222, 0.2);
+      --amber: #f6b841;
+      --orange: #e16d3f;
+      --green: #75d699;
+      --shadow: 0 24px 80px rgba(3, 12, 16, 0.45);
+      --sans: "DM Sans", sans-serif;
+      --mono: "DM Mono", monospace;
+      --malayalam: "Anek Malayalam", "DM Sans", sans-serif;
+      color-scheme: dark;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { min-width: 320px; background: #07191f; }
+
+    body {
+      min-width: 320px;
+      min-height: 100vh;
+      margin: 0;
+      color: var(--cream);
+      background:
+        linear-gradient(180deg, rgba(5, 17, 23, 0.18) 0%, rgba(5, 17, 23, 0.02) 38%, rgba(5, 15, 18, 0.5) 76%, rgba(4, 13, 16, 0.84) 100%),
+        url("assets/chaayakada-monsoon.jpg") center center / cover fixed no-repeat,
+        #07191f;
+      font-family: var(--sans);
+    }
+
+    body::before {
+      display: none;
+    }
+
+    body::after {
+      display: none;
+    }
+
+    button,
+    input { font: inherit; }
+
+    button,
+    a { -webkit-tap-highlight-color: transparent; }
+
+    button:focus-visible,
+    a:focus-visible,
+    input:focus-visible {
+      outline: 3px solid var(--amber);
+      outline-offset: 3px;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .stage {
+      position: relative;
+      display: flex;
+      min-height: 100svh;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      padding: 22px clamp(18px, 3.6vw, 58px) 24px;
+    }
+
+    .topbar {
+      position: relative;
+      z-index: 4;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 18px;
+      min-height: 34px;
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.07em;
+      text-shadow: 0 1px 8px rgba(0, 0, 0, 0.4);
+      text-transform: uppercase;
+    }
+
+    .clock { justify-self: start; }
+
+    .online {
+      display: flex;
+      align-items: center;
+      justify-self: center;
+      gap: 9px;
+    }
+
+    .online-dot,
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 0 5px rgba(117, 214, 153, 0.14);
+    }
+
+    .top-links {
+      display: flex;
+      align-items: center;
+      justify-self: end;
+      gap: 20px;
+    }
+
+    .top-links a,
+    .top-links button {
+      border: 0;
+      background: transparent;
+      color: var(--cream);
+      cursor: pointer;
+      font: inherit;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .top-links a:hover,
+    .top-links button:hover { color: var(--amber); }
+
+    .brand {
+      position: relative;
+      z-index: 2;
+      align-self: center;
+      width: min(880px, 92vw);
+      margin: clamp(24px, 7vh, 76px) auto auto;
+      color: white;
+      text-align: center;
+      text-shadow: 0 6px 34px rgba(3, 12, 16, 0.55);
+    }
+
+    .eyebrow {
+      margin-bottom: 12px;
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.19em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: var(--malayalam);
+      font-size: clamp(78px, 12.5vw, 176px);
+      font-weight: 700;
+      line-height: 0.67;
+      letter-spacing: -0.065em;
+    }
+
+    h1 span {
+      display: block;
+      margin-top: 0.34em;
+      font-family: var(--sans);
+      font-size: 0.25em;
+      letter-spacing: 0.32em;
+      line-height: 1;
+      text-indent: 0.32em;
+    }
+
+    .tagline {
+      margin: 19px auto 0;
+      color: var(--cream-soft);
+      font-size: 14px;
+      letter-spacing: 0.02em;
+    }
+
+    .station-zone {
+      position: relative;
+      z-index: 3;
+      width: min(1100px, 100%);
+      margin: clamp(28px, 7vh, 86px) auto 0;
+    }
+
+    .era-switcher {
+      display: flex;
+      width: max-content;
+      max-width: 100%;
+      align-items: center;
+      gap: 5px;
+      margin: 0 auto 10px;
+      padding: 5px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(7, 20, 21, 0.66);
+      box-shadow: 0 12px 36px rgba(4, 14, 17, 0.25);
+      backdrop-filter: blur(18px) saturate(1.2);
+    }
+
+    .era-button {
+      min-width: 78px;
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--cream-soft);
+      cursor: pointer;
+      padding: 9px 18px;
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .era-button:hover { color: white; }
+
+    .era-button[aria-pressed="true"] {
+      background: var(--cream);
+      color: #15302d;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.24);
+    }
+
+    .player-dock {
+      display: grid;
+      grid-template-columns: minmax(356px, 0.9fr) minmax(380px, 1.3fr);
+      gap: 0;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 25px;
+      background: var(--glass);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(24px) saturate(1.25);
+    }
+
+    .video-wrap {
+      min-width: 356px;
+      min-height: 200px;
+      background: #061012;
+      aspect-ratio: 16 / 9;
+    }
+
+    #youtubePlayer,
+    #youtubePlayer iframe {
+      display: block;
+      width: 100%;
+      height: 100%;
+      min-width: 356px;
+      min-height: 200px;
+      border: 0;
+    }
+
+    .player-copy {
+      display: grid;
+      grid-template-rows: auto auto 1fr auto auto;
+      min-width: 0;
+      padding: 22px 24px 19px;
+    }
+
+    .now-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 7px;
+      color: var(--cream-soft);
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .source-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: white;
+      white-space: nowrap;
+    }
+
+    .youtube-mark {
+      display: inline-grid;
+      width: 24px;
+      height: 17px;
+      place-items: center;
+      border-radius: 5px;
+      background: #ff0033;
+      color: white;
+      font-size: 8px;
+      line-height: 1;
+    }
+
+    .player-copy h2 {
+      overflow: hidden;
+      margin: 0;
+      font-family: var(--malayalam);
+      font-size: clamp(26px, 3vw, 42px);
+      font-weight: 600;
+      line-height: 1;
+      letter-spacing: -0.025em;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .track-meta {
+      overflow: hidden;
+      margin: 7px 0 0;
+      align-self: start;
+      color: var(--cream-soft);
+      font-size: 11px;
+      line-height: 1.45;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .progress-row {
+      display: grid;
+      grid-template-columns: 37px 1fr 37px;
+      align-items: center;
+      gap: 9px;
+      align-self: end;
+      margin-top: 13px;
+      color: rgba(255, 247, 222, 0.6);
+      font-family: var(--mono);
+      font-size: 8px;
+    }
+
+    .progress {
+      height: 2px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: rgba(255, 247, 222, 0.2);
+    }
+
+    .progress-fill {
+      width: 0;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--cream);
+      transition: width 400ms linear;
+    }
+
+    .control-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: end;
+      gap: 16px;
+      margin-top: 12px;
+    }
+
+    .status {
+      display: flex;
+      min-width: 0;
+      align-items: center;
+      gap: 8px;
+      color: rgba(255, 247, 222, 0.62);
+      font-family: var(--mono);
+      font-size: 8px;
+      line-height: 1.35;
+    }
+
+    .status-dot {
+      width: 5px;
+      height: 5px;
+      flex: 0 0 auto;
+      box-shadow: 0 0 0 4px rgba(117, 214, 153, 0.1);
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .icon-button,
+    .play-button {
+      display: inline-grid;
+      place-items: center;
+      border: 1px solid rgba(255, 247, 222, 0.22);
+      border-radius: 50%;
+      background: transparent;
+      color: white;
+      cursor: pointer;
+    }
+
+    .icon-button {
+      width: 34px;
+      height: 34px;
+      font-size: 13px;
+    }
+
+    .play-button {
+      width: 49px;
+      height: 49px;
+      border-color: var(--cream);
+      background: var(--cream);
+      color: #12302d;
+      font-size: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+    }
+
+    .icon-button:hover { background: rgba(255, 247, 222, 0.1); }
+    .play-button:hover { background: white; }
+
+    .icon-button:disabled,
+    .play-button:disabled { cursor: wait; opacity: 0.48; }
+
+    .dock-links {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      margin-top: 10px;
+    }
+
+    .dock-links button,
+    .dock-links a {
+      border: 0;
+      background: transparent;
+      color: rgba(255, 247, 222, 0.7);
+      cursor: pointer;
+      padding: 0;
+      font-family: var(--mono);
+      font-size: 8px;
+      letter-spacing: 0.05em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .dock-links button:hover,
+    .dock-links a:hover { color: var(--amber); }
+
+    .notice {
+      position: absolute;
+      right: 12px;
+      bottom: calc(100% + 52px);
+      width: min(440px, calc(100vw - 36px));
+      border: 1px solid rgba(246, 184, 65, 0.32);
+      border-radius: 12px;
+      background: var(--glass-strong);
+      color: #ffe4ac;
+      padding: 11px 13px;
+      font-size: 11px;
+      line-height: 1.5;
+      box-shadow: 0 16px 42px rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(20px);
+    }
+
+    .notice[hidden] { display: none; }
+    .notice a { color: inherit; font-weight: 700; }
+
+    dialog {
+      width: min(690px, calc(100% - 30px));
+      max-height: min(780px, calc(100vh - 36px));
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 21px;
+      background: #102c2e;
+      color: var(--cream);
+      padding: 29px;
+      box-shadow: 0 28px 90px rgba(1, 9, 13, 0.62);
+    }
+
+    dialog::backdrop { background: rgba(2, 10, 13, 0.74); backdrop-filter: blur(7px); }
+
+    dialog h3 {
+      margin: 0 44px 8px 0;
+      font-family: var(--malayalam);
+      font-size: 39px;
+      line-height: 1;
+    }
+
+    dialog h4 { margin: 22px 0 8px; }
+
+    dialog p,
+    dialog li { color: var(--cream-soft); font-size: 13px; line-height: 1.65; }
+
+    dialog a { color: var(--amber); font-weight: 700; }
+
+    dialog code {
+      padding: 2px 5px;
+      border-radius: 4px;
+      background: rgba(255, 247, 222, 0.1);
+      color: white;
+      font-family: var(--mono);
+      font-size: 0.9em;
+    }
+
+    .close {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: transparent;
+      color: var(--cream);
+      cursor: pointer;
+      font-size: 23px;
+      line-height: 1;
+    }
+
+    .dialog-era-row {
+      display: flex;
+      gap: 7px;
+      margin: 20px 0 13px;
+    }
+
+    .dialog-era {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: transparent;
+      color: var(--cream-soft);
+      cursor: pointer;
+      padding: 8px 13px;
+      font-family: var(--mono);
+      font-size: 9px;
+    }
+
+    .dialog-era[aria-pressed="true"] { background: var(--cream); color: #15302d; }
+
+    .song-list { display: grid; gap: 8px; }
+
+    .song-item {
+      display: grid;
+      grid-template-columns: 39px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 11px;
+      width: 100%;
+      border: 1px solid rgba(255, 247, 222, 0.14);
+      border-radius: 12px;
+      background: rgba(255, 247, 222, 0.045);
+      color: var(--cream);
+      cursor: pointer;
+      padding: 10px;
+      text-align: left;
+    }
+
+    .song-item:hover,
+    .song-item[aria-current="true"] { border-color: var(--amber); background: rgba(246, 184, 65, 0.08); }
+
+    .song-year { color: var(--amber); font-family: var(--mono); font-size: 10px; }
+    .song-item strong,
+    .song-item small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .song-item strong { font-family: var(--malayalam); font-size: 16px; }
+    .song-item small { margin-top: 2px; color: var(--cream-soft); font-size: 10px; }
+
+    .discovery {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .discovery input {
+      width: 100%;
+      min-width: 0;
+      height: 43px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: rgba(255, 247, 222, 0.08);
+      color: white;
+      padding: 0 12px;
+    }
+
+    .discovery input::placeholder { color: rgba(255, 247, 222, 0.48); }
+
+    .load-button {
+      min-height: 43px;
+      border: 0;
+      border-radius: 10px;
+      background: var(--amber);
+      color: #15302d;
+      cursor: pointer;
+      padding: 0 15px;
+      font-weight: 700;
+    }
+
+    .load-button:hover { background: #ffd074; }
+
+    @media (max-width: 850px) {
+      .stage { min-height: auto; overflow: visible; }
+      .brand { margin-top: 70px; }
+      .station-zone { margin-top: 90px; }
+      .player-dock { grid-template-columns: 1fr; width: min(610px, 100%); margin: 0 auto; }
+      .video-wrap,
+      #youtubePlayer,
+      #youtubePlayer iframe { min-width: 0; min-height: 200px; }
+      .player-copy { min-height: 224px; }
+    }
+
+    @media (max-width: 620px) {
+      body { background-position: center, 42% center, center; }
+      .stage { padding: 15px 12px 18px; }
+      .topbar { grid-template-columns: 1fr 1fr; }
+      .online { justify-self: end; }
+      .top-links { grid-column: 1 / -1; justify-self: center; margin-top: 4px; }
+      .brand { margin-top: 78px; }
+      h1 { font-size: clamp(76px, 27vw, 118px); }
+      .tagline { width: min(300px, 100%); }
+      .station-zone { margin-top: 100px; }
+      .era-button { min-width: 72px; padding: 9px 14px; }
+      .player-dock { border-radius: 19px; }
+      .video-wrap,
+      #youtubePlayer,
+      #youtubePlayer iframe { min-height: 200px; }
+      .player-copy { min-height: 246px; padding: 19px 18px 17px; }
+      .player-copy h2 { white-space: normal; }
+      .track-meta { white-space: normal; }
+      .control-row { align-items: center; }
+      .notice { right: 0; }
+      dialog { padding: 25px 19px; }
+      .discovery { grid-template-columns: 1fr; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="stage">
+    <header class="topbar">
+      <div class="clock" id="clock">--:-- IST</div>
+      <div class="online"><span class="online-dot"></span><span id="listeners">36</span> demo listeners</div>
+      <nav class="top-links" aria-label="Station links">
+        <a id="youtubeLink" href="https://www.youtube.com/results?search_query=Malayalam+90s+songs+official" target="_blank" rel="noopener">YouTube ↗</a>
+        <button id="aboutBtn">About</button>
+      </nav>
+    </header>
+
+    <section class="brand" aria-labelledby="brandTitle">
+      <div class="eyebrow">കേരളത്തിന്റെ shared listening room</div>
+      <h1 id="brandTitle">ചായക്കട <span>RADIO</span></h1>
+      <p class="tagline">One station. Three decades. All the songs that stayed with us.</p>
+    </section>
+
+    <section class="station-zone" aria-label="Chaaya Kada Radio station">
+      <div class="era-switcher" aria-label="Choose a decade">
+        <button class="era-button" type="button" data-era="80s" aria-pressed="false">80s</button>
+        <button class="era-button" type="button" data-era="90s" aria-pressed="true">90s</button>
+        <button class="era-button" type="button" data-era="2000s" aria-pressed="false">2000s</button>
+      </div>
+
+      <p class="notice" id="playerNotice" hidden></p>
+
+      <div class="player-dock">
+        <div class="video-wrap">
+          <div id="youtubePlayer" aria-label="YouTube video player"></div>
+        </div>
+
+        <div class="player-copy">
+          <div class="now-row">
+            <span id="eraReadout">90s • 01 / 13</span>
+            <span class="source-badge"><span class="youtube-mark" aria-hidden="true">▶</span>YouTube</span>
+          </div>
+          <h2 id="trackTitle">Olikkunnuvo</h2>
+          <p class="track-meta" id="trackMeta">Chambakulam Thachan (1992) • K. J. Yesudas • Raveendran</p>
+
+          <div class="progress-row" aria-label="Playback progress">
+            <span id="elapsed">0:00</span>
+            <div class="progress" aria-hidden="true"><div class="progress-fill" id="progressFill"></div></div>
+            <span id="duration">0:00</span>
+          </div>
+
+          <div class="control-row">
+            <div>
+              <div class="status" id="syncStatus" aria-live="polite"><span class="status-dot"></span>connecting to YouTube</div>
+              <div class="dock-links">
+                <button type="button" id="browseBtn">Browse songs</button>
+                <button type="button" id="muteBtn" disabled>Mute</button>
+                <a id="openTrackLink" href="https://www.youtube.com/watch?v=AtOAhGH1Rf0" target="_blank" rel="noopener">Open track ↗</a>
+              </div>
+            </div>
+
+            <div class="controls" aria-label="Playback controls">
+              <button class="icon-button" id="previousBtn" type="button" aria-label="Previous track" disabled>◀</button>
+              <button class="play-button" id="playBtn" type="button" aria-label="Join the station" disabled>▶</button>
+              <button class="icon-button" id="nextBtn" type="button" aria-label="Next track" disabled>▶</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="songsDialog">
+    <button class="close" data-close="songsDialog" aria-label="Close song browser">×</button>
+    <h3>Tea shop picks</h3>
+    <p>A deeper, era-mapped mix of Malayalam tea-shop favourites from official or rights-holder YouTube uploads. Pick a decade, then a song.</p>
+    <div class="dialog-era-row" aria-label="Browse decade">
+      <button class="dialog-era" type="button" data-dialog-era="80s" aria-pressed="false">80s</button>
+      <button class="dialog-era" type="button" data-dialog-era="90s" aria-pressed="true">90s</button>
+      <button class="dialog-era" type="button" data-dialog-era="2000s" aria-pressed="false">2000s</button>
+    </div>
+    <div class="song-list" id="songList"></div>
+
+    <h4>Bring another YouTube song</h4>
+    <form class="discovery" id="youtubeForm">
+      <label class="sr-only" for="youtubeUrl">YouTube video URL or ID</label>
+      <input id="youtubeUrl" type="text" inputmode="url" autocomplete="off" placeholder="Paste a YouTube video link or ID" />
+      <button class="load-button" type="submit">Load &amp; play</button>
+    </form>
+    <form class="discovery" id="searchForm">
+      <label class="sr-only" for="searchQuery">Search YouTube</label>
+      <input id="searchQuery" type="search" value="Malayalam 90s songs official" />
+      <button class="load-button" type="submit">Search YouTube</button>
+    </form>
+  </dialog>
+
+  <dialog id="aboutDialog">
+    <button class="close" data-close="aboutDialog" aria-label="Close about dialog">×</button>
+    <h3>Chaaya Kada Radio</h3>
+    <p>An original Malayalam shared-radio concept, visually inspired by the focused, single-station experience of the supplied Saloon reference and reimagined around a rainy Kerala chaayakada.</p>
+    <p>The 80s, 90s and 2000s are mapped using movie release years. The station clock can place listeners at approximately the same point after they choose to join; YouTube ads, availability and regional rules can make playback differ.</p>
+    <p>Media is delivered by the visible standard YouTube embedded player. This prototype does not download, extract, proxy or restream YouTube media.</p>
+    <p>Playback and data handling are subject to the <a href="https://www.youtube.com/t/terms" target="_blank" rel="noopener">YouTube Terms of Service</a> and <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google Privacy Policy</a>.</p>
+  </dialog>
+
+  <script>
+    /*
+      CHAAYA KADA RADIO CURATION
+      --------------------------
+      Decades are based on each film's release year. Some selections use chapter
+      times from official label jukeboxes; others use a complete official upload.
+      Use only public videos whose uploaders permit embedding.
+    */
+    const STATION_PLAYLIST = [
+      {
+        era: "80s",
+        year: 1986,
+        title: "Poomkatte",
+        movie: "Shyama",
+        singers: "Unni Menon & K. S. Chithra",
+        composer: "Raghu Kumar",
+        channel: "Sony Music Malayalam",
+        videoId: "eyB-8ZiyECg",
+        startSeconds: 571,
+        endSeconds: 819
+      },
+      {
+        era: "80s",
+        year: 1988,
+        title: "Orukili Erukili",
+        movie: "Manu Uncle",
+        singers: "M. G. Sreekumar & K. S. Chithra",
+        composer: "Shyam",
+        channel: "Sony Music Malayalam",
+        videoId: "eyB-8ZiyECg",
+        startSeconds: 819,
+        endSeconds: 988
+      },
+      {
+        era: "80s",
+        year: 1988,
+        title: "Kannamthumbi",
+        movie: "Kakkothikavile Appoppanthadikal",
+        singers: "K. S. Chithra",
+        composer: "Ouseppachan",
+        channel: "Sony Music Malayalam",
+        videoId: "eyB-8ZiyECg",
+        startSeconds: 1217,
+        endSeconds: 1435
+      },
+      {
+        era: "80s",
+        year: 1989,
+        title: "Puthumazhayaay",
+        movie: "Mudra",
+        singers: "M. G. Sreekumar",
+        composer: "Mohan Sithara",
+        channel: "Sony Music Malayalam",
+        videoId: "eyB-8ZiyECg",
+        startSeconds: 1435,
+        endSeconds: 1679
+      },
+      {
+        era: "80s",
+        year: 1988,
+        title: "Saubhaagyam Vathilthurakum",
+        movie: "Pattanapravesham",
+        singers: "Cochin Ibrahim & Satheesh Babu",
+        composer: "Shyam",
+        channel: "Sony Music Malayalam",
+        videoId: "eyB-8ZiyECg",
+        startSeconds: 2139,
+        endSeconds: 2386
+      },
+      {
+        era: "80s",
+        year: 1987,
+        title: "Sindhoora Vaanil",
+        movie: "Bhoomiyile Rajakkanmar",
+        singers: "Unni Menon",
+        composer: "S. P. Venkatesh",
+        channel: "Sony Music Malayalam",
+        videoId: "eyB-8ZiyECg",
+        startSeconds: 2386,
+        endSeconds: 2625
+      },
+      {
+        era: "80s",
+        year: 1984,
+        title: "Oh Mammy Dear Mammy",
+        movie: "Oru Kochukatha Aarum Parayatha Katha",
+        singers: "K. S. Chithra",
+        composer: "A. T. Ummer",
+        channel: "Sony Music Malayalam",
+        videoId: "eyB-8ZiyECg",
+        startSeconds: 2625
+      },
+      {
+        era: "80s",
+        year: 1984,
+        title: "Aayiram Kannumayi",
+        movie: "Nokkethadhoorathu Kannum Nattu",
+        singers: "K. J. Yesudas",
+        composer: "Jerry Amaldev",
+        channel: "Tunix Records",
+        videoId: "jbOM3i-WNPo"
+      },
+      {
+        era: "80s",
+        year: 1987,
+        title: "Vaishaka Sandhye",
+        movie: "Nadodikkattu",
+        singers: "K. J. Yesudas",
+        composer: "Shyam",
+        channel: "Millennium Musics",
+        videoId: "dWiL9zka6no"
+      },
+      {
+        era: "80s",
+        year: 1986,
+        title: "Manjal Prasadavum",
+        movie: "Nakhakshathangal",
+        singers: "K. S. Chithra",
+        composer: "Bombay Ravi",
+        channel: "K. S. Chithra Official Artist Channel",
+        videoId: "OOJb41dtN8g"
+      },
+      {
+        era: "80s",
+        year: 1989,
+        title: "Urakkam Kankalil",
+        movie: "Mahayanam",
+        singers: "M. G. Sreekumar",
+        composer: "Ouseppachan",
+        channel: "Sony Music Malayalam",
+        videoId: "xkKrOAjoxHI",
+        startSeconds: 1177,
+        endSeconds: 1431
+      },
+      {
+        era: "80s",
+        year: 1988,
+        title: "Manithooval Chirakulla",
+        movie: "Simon Peter Ninakku Vendi",
+        singers: "P. Jayachandran",
+        composer: "A. T. Ummer",
+        channel: "Sony Music Malayalam",
+        videoId: "xkKrOAjoxHI",
+        startSeconds: 1431,
+        endSeconds: 1654
+      },
+      {
+        era: "80s",
+        year: 1985,
+        title: "Illikkombil Njan",
+        movie: "Ivide Ee Theerathu",
+        singers: "P. Jayachandran",
+        composer: "A. T. Ummer",
+        channel: "Sony Music Malayalam",
+        videoId: "xkKrOAjoxHI",
+        startSeconds: 1957,
+        endSeconds: 2208
+      },
+      {
+        era: "90s",
+        year: 1992,
+        title: "Olikkunnuvo",
+        movie: "Chambakulam Thachan",
+        singers: "K. J. Yesudas",
+        composer: "Raveendran",
+        channel: "Sony Music Malayalam",
+        videoId: "AtOAhGH1Rf0",
+        startSeconds: 1,
+        endSeconds: 281
+      },
+      {
+        era: "90s",
+        year: 1995,
+        title: "Enthinu Veroru Sooryodayam",
+        movie: "Mazhayethum Munpe",
+        singers: "K. J. Yesudas & K. S. Chithra",
+        composer: "Raveendran",
+        channel: "Sony Music Malayalam",
+        videoId: "AtOAhGH1Rf0",
+        startSeconds: 866,
+        endSeconds: 1138
+      },
+      {
+        era: "90s",
+        year: 1998,
+        title: "Oru Raathri Koodi",
+        movie: "Summer in Bethlehem",
+        singers: "K. J. Yesudas & K. S. Chithra",
+        composer: "Vidyasagar",
+        channel: "Sony Music Malayalam",
+        videoId: "AtOAhGH1Rf0",
+        startSeconds: 561,
+        endSeconds: 866
+      },
+      {
+        era: "90s",
+        year: 1996,
+        title: "Vennila Chandanakkinnam",
+        movie: "Azhakiya Ravanan",
+        singers: "K. J. Yesudas & Shabnam",
+        composer: "Vidyasagar",
+        channel: "Sony Music Malayalam",
+        videoId: "AtOAhGH1Rf0",
+        startSeconds: 1138,
+        endSeconds: 1435
+      },
+      {
+        era: "90s",
+        year: 1996,
+        title: "Raathinkal Poothaali",
+        movie: "Ee Puzhayum Kadannu",
+        singers: "K. J. Yesudas",
+        composer: "Johnson",
+        channel: "Sony Music Malayalam",
+        videoId: "AtOAhGH1Rf0",
+        startSeconds: 1435,
+        endSeconds: 1692
+      },
+      {
+        era: "90s",
+        year: 1997,
+        title: "Kalyanapallakkil",
+        movie: "Kaliyoonjal",
+        singers: "Bhavatharini",
+        composer: "Ilaiyaraaja",
+        channel: "Sony Music Malayalam",
+        videoId: "AtOAhGH1Rf0",
+        startSeconds: 1692,
+        endSeconds: 1963
+      },
+      {
+        era: "90s",
+        year: 1991,
+        title: "Anthi Veyil",
+        movie: "Ulladakkam",
+        singers: "K. J. Yesudas & Sujatha Mohan",
+        composer: "Ouseppachan",
+        channel: "Sony Music Malayalam",
+        videoId: "AtOAhGH1Rf0",
+        startSeconds: 2468,
+        endSeconds: 2697
+      },
+      {
+        era: "90s",
+        year: 1992,
+        title: "Peelikannezhuthi",
+        movie: "Snehasagaram",
+        singers: "G. Venugopal & K. S. Chithra",
+        composer: "Johnson",
+        channel: "Sony Music Malayalam",
+        videoId: "AtOAhGH1Rf0",
+        startSeconds: 2697,
+        endSeconds: 2999
+      },
+      {
+        era: "90s",
+        year: 1999,
+        title: "Mele Vinnin",
+        movie: "Ezhupunna Tharakan",
+        singers: "K. S. Chithra",
+        composer: "Vidyasagar",
+        channel: "Sony Music Malayalam",
+        videoId: "AtOAhGH1Rf0",
+        startSeconds: 1963,
+        endSeconds: 2219
+      },
+      {
+        era: "90s",
+        year: 1994,
+        title: "Neelaakasham",
+        movie: "Saagaram Sakshi",
+        singers: "K. J. Yesudas & K. S. Chithra",
+        composer: "Sharreth",
+        channel: "Sony Music Malayalam",
+        videoId: "AtOAhGH1Rf0",
+        startSeconds: 2219,
+        endSeconds: 2468
+      },
+      {
+        era: "90s",
+        year: 1991,
+        title: "Thaaram Vaalkannaadi Nokki",
+        movie: "Keli",
+        singers: "K. S. Chithra",
+        composer: "Bharathan",
+        channel: "Sony Music Malayalam",
+        videoId: "AtOAhGH1Rf0",
+        startSeconds: 2999
+      },
+      {
+        era: "90s",
+        year: 1998,
+        title: "Ethrayo Janmamayi",
+        movie: "Summer in Bethlehem",
+        singers: "Sujatha Mohan",
+        composer: "Vidyasagar",
+        channel: "Sony Music Malayalam",
+        videoId: "YJNQRzTghCI"
+      },
+      {
+        era: "90s",
+        year: 1994,
+        title: "Sreeragamo",
+        movie: "Pavithram",
+        singers: "K. J. Yesudas",
+        composer: "Sharreth",
+        channel: "SonyMusicSouthVEVO",
+        videoId: "zsdpZXf_g5c"
+      },
+      {
+        era: "2000s",
+        year: 2000,
+        title: "Karale Nin Kai Pidichal",
+        movie: "Devadoothan",
+        singers: "K. J. Yesudas & Preetha Kanna",
+        composer: "Vidyasagar",
+        channel: "Sony Music Malayalam",
+        videoId: "Yp3Jf9xXWV4"
+      },
+      {
+        era: "2000s",
+        year: 2000,
+        title: "Manimuttathavani Panthal",
+        movie: "Dreams",
+        singers: "K. J. Yesudas & Sujatha Mohan",
+        composer: "Vidyasagar",
+        channel: "Sony Music Malayalam",
+        videoId: "AtOAhGH1Rf0",
+        startSeconds: 281,
+        endSeconds: 561
+      },
+      {
+        era: "2000s",
+        year: 2006,
+        title: "Ente Khalbile Vennilavu Nee",
+        movie: "Classmates",
+        singers: "Vineeth Sreenivasan",
+        composer: "Alex Paul",
+        channel: "Wilson Video Songs",
+        videoId: "I2-JBtOZ8H0"
+      },
+      {
+        era: "2000s",
+        year: 2003,
+        title: "Marakkudayaal",
+        movie: "Manassinakkare",
+        singers: "M. G. Sreekumar",
+        composer: "Ilaiyaraaja",
+        channel: "Sony Music Malayalam",
+        videoId: "eY7Q0hnru7Q"
+      },
+      {
+        era: "2000s",
+        year: 2004,
+        title: "Mazhathullikal",
+        movie: "Vettam",
+        singers: "M. G. Sreekumar",
+        composer: "Berny-Ignatius",
+        channel: "Sree Movies Music",
+        videoId: "S-MY1mf_1pc"
+      },
+      {
+        era: "2000s",
+        year: 2002,
+        title: "Chingamaasam",
+        movie: "Meesa Madhavan",
+        singers: "Shankar Mahadevan & Rimi Tomy",
+        composer: "Vidyasagar",
+        channel: "Paattu Petty",
+        videoId: "zzYmEL6rE1U"
+      },
+      {
+        era: "2000s",
+        year: 2004,
+        title: "Kandu Kandu",
+        movie: "Mambazhakkalam",
+        singers: "Sujatha Mohan",
+        composer: "M. Jayachandran",
+        channel: "Manorama Music",
+        videoId: "7bMJT4Ggz_o"
+      },
+      {
+        era: "2000s",
+        year: 2002,
+        title: "Karimizhi Kuruviye",
+        movie: "Meesa Madhavan",
+        singers: "V. Devanand & Sujatha Mohan",
+        composer: "Vidyasagar",
+        channel: "Sony Music Malayalam",
+        videoId: "hraTNj9Au-A"
+      },
+      {
+        era: "2000s",
+        year: 2003,
+        title: "Oru Chembaneer Pooviruthu",
+        movie: "Sthithi",
+        singers: "Unni Menon",
+        composer: "Unni Menon",
+        channel: "Sony Music Malayalam",
+        videoId: "mI2a5VGpH_4"
+      },
+      {
+        era: "2000s",
+        year: 2005,
+        title: "Velmuruka Haro Hara",
+        movie: "Naran",
+        singers: "M. G. Sreekumar",
+        composer: "Deepak Dev",
+        channel: "Manorama Music Songs",
+        videoId: "HoJsdfhpxjA"
+      },
+      {
+        era: "2000s",
+        year: 2002,
+        title: "Sukhamanee Nilavu",
+        movie: "Nammal",
+        singers: "Vidhu Prathap & Jyotsna",
+        composer: "Mohan Sithara",
+        channel: "Central Talkies",
+        videoId: "06Bpuh2oYvs"
+      },
+      {
+        era: "2000s",
+        year: 2000,
+        title: "Entharo Mahanu",
+        movie: "Devadoothan",
+        singers: "Symphony",
+        composer: "Vidyasagar",
+        channel: "Matinee Now",
+        videoId: "Vp2TclEYajw"
+      }
+    ];
+
+    const dom = {
+      aboutBtn: document.getElementById("aboutBtn"),
+      aboutDialog: document.getElementById("aboutDialog"),
+      browseBtn: document.getElementById("browseBtn"),
+      clock: document.getElementById("clock"),
+      duration: document.getElementById("duration"),
+      elapsed: document.getElementById("elapsed"),
+      eraButtons: [...document.querySelectorAll("[data-era]")],
+      eraReadout: document.getElementById("eraReadout"),
+      listeners: document.getElementById("listeners"),
+      muteBtn: document.getElementById("muteBtn"),
+      nextBtn: document.getElementById("nextBtn"),
+      openTrackLink: document.getElementById("openTrackLink"),
+      playBtn: document.getElementById("playBtn"),
+      playerNotice: document.getElementById("playerNotice"),
+      previousBtn: document.getElementById("previousBtn"),
+      progressFill: document.getElementById("progressFill"),
+      searchForm: document.getElementById("searchForm"),
+      searchQuery: document.getElementById("searchQuery"),
+      songList: document.getElementById("songList"),
+      songsDialog: document.getElementById("songsDialog"),
+      syncStatus: document.getElementById("syncStatus"),
+      trackMeta: document.getElementById("trackMeta"),
+      trackTitle: document.getElementById("trackTitle"),
+      youtubeForm: document.getElementById("youtubeForm"),
+      youtubeLink: document.getElementById("youtubeLink"),
+      youtubeUrl: document.getElementById("youtubeUrl")
+    };
+
+    let player;
+    let playerReady = false;
+    let hasJoined = false;
+    let activeEra = "90s";
+    let eraPosition = 0;
+    let currentTrack = tracksForEra(activeEra)[eraPosition];
+    let progressTimer;
+
+    function tracksForEra(era) {
+      return STATION_PLAYLIST.filter((track) => track.era === era);
+    }
+
+    function formatTime(value) {
+      const seconds = Number.isFinite(value) ? Math.max(0, Math.floor(value)) : 0;
+      const minutes = Math.floor(seconds / 60);
+      const remainder = seconds % 60;
+      return `${minutes}:${String(remainder).padStart(2, "0")}`;
+    }
+
+    function updateClock() {
+      dom.clock.textContent = `${new Intl.DateTimeFormat("en-IN", {
+        timeZone: "Asia/Kolkata",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false
+      }).format(new Date())} IST`;
+    }
+
+    function setNotice(message, includeLink = false) {
+      dom.playerNotice.hidden = !message;
+      dom.playerNotice.replaceChildren();
+      if (!message) return;
+      dom.playerNotice.append(document.createTextNode(message));
+      if (includeLink && currentTrack?.videoId) {
+        const link = document.createElement("a");
+        link.href = `https://www.youtube.com/watch?v=${encodeURIComponent(currentTrack.videoId)}`;
+        link.target = "_blank";
+        link.rel = "noopener";
+        link.textContent = " Open on YouTube.";
+        dom.playerNotice.append(link);
+      }
+    }
+
+    function videoPayload(track) {
+      const payload = { videoId: track.videoId };
+      if (Number.isFinite(track.startSeconds)) payload.startSeconds = track.startSeconds;
+      if (Number.isFinite(track.endSeconds)) payload.endSeconds = track.endSeconds;
+      return payload;
+    }
+
+    function updateEraButtons() {
+      dom.eraButtons.forEach((button) => {
+        button.setAttribute("aria-pressed", String(button.dataset.era === activeEra));
+      });
+      document.querySelectorAll("[data-dialog-era]").forEach((button) => {
+        button.setAttribute("aria-pressed", String(button.dataset.dialogEra === activeEra));
+      });
+      dom.searchQuery.value = `Malayalam ${activeEra} songs official`;
+      dom.youtubeLink.href = `https://www.youtube.com/results?search_query=${encodeURIComponent(dom.searchQuery.value)}`;
+    }
+
+    function updateTrackDisplay() {
+      const eraTracks = tracksForEra(activeEra);
+      dom.eraReadout.textContent = `${activeEra} • ${String(eraPosition + 1).padStart(2, "0")} / ${String(eraTracks.length).padStart(2, "0")}`;
+      dom.trackTitle.textContent = currentTrack.title;
+      dom.trackMeta.textContent = `${currentTrack.movie} (${currentTrack.year}) • ${currentTrack.singers} • ${currentTrack.composer}`;
+      dom.openTrackLink.href = `https://www.youtube.com/watch?v=${encodeURIComponent(currentTrack.videoId)}`;
+      renderSongList();
+    }
+
+    function selectEra(era, play = false) {
+      if (!tracksForEra(era).length) return;
+      activeEra = era;
+      eraPosition = 0;
+      currentTrack = tracksForEra(activeEra)[eraPosition];
+      updateEraButtons();
+      updateTrackDisplay();
+      setNotice("");
+      if (!playerReady) return;
+      if (play || hasJoined) player.loadVideoById(videoPayload(currentTrack));
+      else player.cueVideoById(videoPayload(currentTrack));
+    }
+
+    function changeTrack(delta, play = true) {
+      const eraTracks = tracksForEra(activeEra);
+      eraPosition = (eraPosition + delta + eraTracks.length) % eraTracks.length;
+      currentTrack = eraTracks[eraPosition];
+      updateTrackDisplay();
+      setNotice("");
+      if (!playerReady) return;
+      if (play || hasJoined) player.loadVideoById(videoPayload(currentTrack));
+      else player.cueVideoById(videoPayload(currentTrack));
+    }
+
+    function stationOffset(track, videoDuration) {
+      const start = track.startSeconds || 0;
+      const end = track.endSeconds || videoDuration;
+      const clipDuration = Math.max(1, end - start);
+      return start + (Math.floor(Date.now() / 1000) % Math.floor(clipDuration));
+    }
+
+    function joinStation() {
+      if (!playerReady) return;
+      hasJoined = true;
+      const duration = player.getDuration();
+      if (duration > 0) player.seekTo(stationOffset(currentTrack, duration), true);
+      player.playVideo();
+      dom.syncStatus.innerHTML = '<span class="status-dot"></span>aligned to the station clock';
+    }
+
+    function relativeProgress() {
+      if (!playerReady) return { current: 0, total: 0 };
+      const absoluteCurrent = player.getCurrentTime();
+      const videoDuration = player.getDuration();
+      const start = currentTrack.startSeconds || 0;
+      const end = currentTrack.endSeconds || videoDuration;
+      const total = Math.max(0, end - start);
+      const current = Math.min(total, Math.max(0, absoluteCurrent - start));
+      return { current, total };
+    }
+
+    function updateProgress() {
+      const progress = relativeProgress();
+      dom.elapsed.textContent = formatTime(progress.current);
+      dom.duration.textContent = formatTime(progress.total);
+      dom.progressFill.style.width = progress.total > 0
+        ? `${Math.min(100, (progress.current / progress.total) * 100)}%`
+        : "0%";
+    }
+
+    function renderSongList() {
+      dom.songList.replaceChildren();
+      tracksForEra(activeEra).forEach((track, index) => {
+        const button = document.createElement("button");
+        button.className = "song-item";
+        button.type = "button";
+        button.setAttribute("aria-current", String(currentTrack === track));
+        button.innerHTML = `
+          <span class="song-year"></span>
+          <span><strong></strong><small></small></span>
+          <span aria-hidden="true">▶</span>
+        `;
+        button.querySelector(".song-year").textContent = String(track.year);
+        button.querySelector("strong").textContent = track.title;
+        button.querySelector("small").textContent = `${track.movie} • ${track.singers} • ${track.composer}`;
+        button.addEventListener("click", () => {
+          eraPosition = index;
+          currentTrack = tracksForEra(activeEra)[eraPosition];
+          updateTrackDisplay();
+          if (playerReady) {
+            hasJoined = true;
+            player.loadVideoById(videoPayload(currentTrack));
+          }
+          dom.songsDialog.close();
+        });
+        dom.songList.append(button);
+      });
+    }
+
+    function extractVideoId(value) {
+      const raw = value.trim();
+      if (/^[A-Za-z0-9_-]{11}$/.test(raw)) return raw;
+      try {
+        const url = new URL(raw);
+        const host = url.hostname.replace(/^www\./, "");
+        if (host === "youtu.be") return url.pathname.split("/").filter(Boolean)[0] || null;
+        if (host === "youtube.com" || host.endsWith(".youtube.com") || host === "youtube-nocookie.com") {
+          if (url.searchParams.get("v")) return url.searchParams.get("v");
+          const parts = url.pathname.split("/").filter(Boolean);
+          const markerIndex = parts.findIndex((part) => ["embed", "shorts", "live"].includes(part));
+          return markerIndex >= 0 ? parts[markerIndex + 1] || null : null;
+        }
+      } catch (_) {
+        return null;
+      }
+      return null;
+    }
+
+    function loadCustomVideo(videoId) {
+      currentTrack = {
+        era: activeEra,
+        year: "Guest pick",
+        title: "Loading from YouTube…",
+        movie: "Your selection",
+        singers: "Metadata appears in the YouTube player",
+        composer: "YouTube",
+        channel: "YouTube",
+        videoId
+      };
+      hasJoined = true;
+      dom.trackTitle.textContent = currentTrack.title;
+      dom.trackMeta.textContent = "Your selection • playback and metadata from YouTube";
+      dom.openTrackLink.href = `https://www.youtube.com/watch?v=${encodeURIComponent(videoId)}`;
+      dom.eraReadout.textContent = `${activeEra} • GUEST PICK`;
+      setNotice("");
+      player.loadVideoById(videoPayload(currentTrack));
+    }
+
+    function updateCustomMetadata() {
+      if (!playerReady || STATION_PLAYLIST.includes(currentTrack)) return;
+      const data = player.getVideoData();
+      if (!data?.title) return;
+      dom.trackTitle.textContent = data.title;
+      dom.trackMeta.textContent = `${data.author || "YouTube"} • guest pick`;
+    }
+
+    function onPlayerReady() {
+      playerReady = true;
+      [dom.playBtn, dom.muteBtn, dom.nextBtn, dom.previousBtn].forEach((button) => { button.disabled = false; });
+      dom.syncStatus.innerHTML = '<span class="status-dot"></span>ready — press play to join';
+      progressTimer = window.setInterval(updateProgress, 750);
+      updateProgress();
+      if (location.protocol === "file:") {
+        setNotice("YouTube may block file:// embeds because there is no site identity. Serve this folder on localhost using the README instructions.");
+      }
+    }
+
+    function onPlayerStateChange(event) {
+      const state = event.data;
+      dom.playBtn.textContent = state === YT.PlayerState.PLAYING ? "Ⅱ" : "▶";
+      dom.playBtn.setAttribute("aria-label", state === YT.PlayerState.PLAYING ? "Pause" : "Join the station");
+      if (state === YT.PlayerState.PLAYING) {
+        hasJoined = true;
+        updateCustomMetadata();
+        dom.syncStatus.innerHTML = '<span class="status-dot"></span>playing through YouTube';
+      }
+      if (state === YT.PlayerState.ENDED) changeTrack(1, true);
+      updateProgress();
+    }
+
+    function onPlayerError(event) {
+      const messages = {
+        2: "That YouTube link or video ID is not valid.",
+        5: "This video cannot play in the embedded HTML5 player.",
+        100: "This video is unavailable or has been removed.",
+        101: "The uploader does not allow this video to be embedded.",
+        150: "The uploader does not allow this video to be embedded.",
+        153: "YouTube could not verify this local page. Serve the folder from localhost using the README instructions."
+      };
+      setNotice(messages[event.data] || "YouTube could not play this video here.", true);
+      dom.syncStatus.innerHTML = '<span class="status-dot"></span>playback needs attention';
+    }
+
+    window.onYouTubeIframeAPIReady = function () {
+      const vars = {
+        autoplay: 0,
+        controls: 1,
+        playsinline: 1,
+        rel: 0,
+        start: currentTrack.startSeconds || 0
+      };
+      if (Number.isFinite(currentTrack.endSeconds)) vars.end = currentTrack.endSeconds;
+      if (location.protocol === "http:" || location.protocol === "https:") vars.origin = location.origin;
+
+      player = new YT.Player("youtubePlayer", {
+        width: "100%",
+        height: "100%",
+        videoId: currentTrack.videoId,
+        playerVars: vars,
+        events: {
+          onReady: onPlayerReady,
+          onStateChange: onPlayerStateChange,
+          onError: onPlayerError
+        }
+      });
+    };
+
+    dom.eraButtons.forEach((button) => {
+      button.addEventListener("click", () => selectEra(button.dataset.era, false));
+    });
+
+    document.querySelectorAll("[data-dialog-era]").forEach((button) => {
+      button.addEventListener("click", () => selectEra(button.dataset.dialogEra, false));
+    });
+
+    dom.previousBtn.addEventListener("click", () => changeTrack(-1, true));
+    dom.nextBtn.addEventListener("click", () => changeTrack(1, true));
+    dom.playBtn.addEventListener("click", () => {
+      if (!playerReady) return;
+      if (player.getPlayerState() === YT.PlayerState.PLAYING) player.pauseVideo();
+      else joinStation();
+    });
+
+    dom.muteBtn.addEventListener("click", () => {
+      if (!playerReady) return;
+      if (player.isMuted()) {
+        player.unMute();
+        dom.muteBtn.textContent = "Mute";
+      } else {
+        player.mute();
+        dom.muteBtn.textContent = "Sound on";
+      }
+    });
+
+    dom.youtubeForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      if (!playerReady) return;
+      const videoId = extractVideoId(dom.youtubeUrl.value);
+      if (!videoId || !/^[A-Za-z0-9_-]{11}$/.test(videoId)) {
+        setNotice("Paste a complete YouTube watch, share, Shorts, live or embed link — or an 11-character video ID.");
+        dom.songsDialog.close();
+        return;
+      }
+      loadCustomVideo(videoId);
+      dom.songsDialog.close();
+    });
+
+    dom.searchForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const query = dom.searchQuery.value.trim() || `Malayalam ${activeEra} songs official`;
+      window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`, "_blank", "noopener");
+    });
+
+    function openDialog(dialog) {
+      if (typeof dialog.showModal === "function") dialog.showModal();
+    }
+
+    dom.browseBtn.addEventListener("click", () => openDialog(dom.songsDialog));
+    dom.aboutBtn.addEventListener("click", () => openDialog(dom.aboutDialog));
+    document.querySelectorAll("[data-close]").forEach((button) => {
+      button.addEventListener("click", () => document.getElementById(button.dataset.close).close());
+    });
+    document.querySelectorAll("dialog").forEach((dialog) => {
+      dialog.addEventListener("click", (event) => {
+        if (event.target === dialog) dialog.close();
+      });
+    });
+
+    updateEraButtons();
+    updateTrackDisplay();
+    updateClock();
+    window.setInterval(updateClock, 30000);
+    window.setInterval(() => {
+      dom.listeners.textContent = String(34 + Math.floor((Date.now() / 20000) % 7));
+    }, 20000);
+
+    const apiScript = document.createElement("script");
+    apiScript.src = "https://www.youtube.com/iframe_api";
+    apiScript.async = true;
+    apiScript.addEventListener("error", () => {
+      setNotice("The official YouTube player could not load. Check your connection, then refresh this page.");
+    });
+    document.head.append(apiScript);
+
+    window.addEventListener("beforeunload", () => window.clearInterval(progressTimer));
+  </script>
+</body>
+</html>
