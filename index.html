@@ -219,28 +219,28 @@
 
     .deck {
       position: relative;
-      width: 100%;
+      display: grid;
+      grid-template-columns: 100px minmax(0, 1fr);
+      align-items: center;
+      gap: 14px;
+      width: min(520px, 100%);
       margin: 0 auto;
       color: var(--cream);
-    }
-
-    .now-playing-panel {
-      position: relative;
-      z-index: 8;
-      width: min(390px, 100%);
-      margin: 14px 0 0 auto;
       border: 1px solid rgba(255, 246, 220, 0.24);
-      border-radius: 16px;
+      border-radius: 14px;
       background:
         radial-gradient(circle at 50% -40%, rgba(231, 191, 104, 0.13), transparent 64%),
         rgba(4, 16, 18, 0.86);
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.42), inset 0 1px 0 rgba(255,255,255,.05);
-      padding: 12px 14px 13px;
+      padding: 14px;
       backdrop-filter: blur(18px);
     }
 
+    .now-playing-panel { min-width: 0; }
+
     .deck-head {
       display: flex;
+      flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
       gap: 10px;
@@ -271,14 +271,12 @@
     .disc-stage {
       position: relative;
       display: grid;
-      min-height: 202px;
       place-items: center;
-      padding: 4px 0;
     }
 
     .disc {
       position: relative;
-      width: 190px;
+      width: 100px;
       aspect-ratio: 1;
       overflow: hidden;
       border: 1px solid rgba(255, 250, 225, 0.68);
@@ -306,10 +304,10 @@
     .spin-marker {
       position: absolute;
       z-index: 3;
-      top: 13px;
-      left: calc(50% - 3px);
-      width: 6px;
-      height: 19px;
+      top: 9px;
+      left: calc(50% - 2px);
+      width: 4px;
+      height: 11px;
       border-radius: 999px;
       background: #ffe19a;
       box-shadow: 0 0 0 2px rgba(3, 14, 16, 0.62), 0 0 12px rgba(255, 225, 154, 0.7);
@@ -333,9 +331,9 @@
       z-index: 2;
       top: 50%;
       left: 50%;
-      width: 27px;
-      height: 27px;
-      border: 7px solid rgba(241, 229, 190, 0.92);
+      width: 17px;
+      height: 17px;
+      border: 4px solid rgba(241, 229, 190, 0.92);
       border-radius: 50%;
       background: #061113;
       box-shadow: 0 0 0 2px rgba(0,0,0,.62), 0 0 0 4px rgba(255,255,255,.12);
@@ -596,7 +594,7 @@
     @media (min-width: 900px) {
       .radio-room { width: min(1120px, 100%); }
       .station {
-        width: 390px;
+        width: 520px;
         justify-self: end;
         margin-right: clamp(0px, 3vw, 42px);
       }
@@ -610,16 +608,13 @@
       .radio-room { gap: 22px; }
       h1 { font-size: clamp(56px, 18vw, 78px); }
       .era-tab { min-width: 76px; padding-inline: 9px; }
-      .disc { width: 150px; }
-      .disc-stage { min-height: 160px; }
-      .now-playing-panel {
-        position: relative;
-        right: auto;
-        bottom: auto;
-        width: 100%;
-        margin-top: 9px;
-      }
-      .transport { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); }
+      .deck { grid-template-columns: 76px minmax(0, 1fr); gap: 10px; padding: 12px; }
+      .disc { width: 76px; }
+      .disc img { inset: 4px; width: calc(100% - 8px); height: calc(100% - 8px); }
+      .transport { grid-template-columns: minmax(0, 1fr) auto; }
+      .track-actions { grid-column: 1 / -1; }
+      .deck-head { font-size: 7px; gap: 5px; }
+      .track-label h2 { font-size: 18px; }
       .crate-head { align-items: start; flex-direction: column; }
       dialog { padding: 25px 18px; }
     }
