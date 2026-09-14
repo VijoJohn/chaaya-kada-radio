@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preconnect" href="https://api.audius.co" />
   <link href="https://fonts.googleapis.com/css2?family=Anek+Malayalam:wght@500;600;700&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23102b2d'/%3E%3Crect x='10' y='16' width='44' height='32' rx='5' fill='%23f0c875'/%3E%3Ccircle cx='23' cy='32' r='7' fill='%23102b2d'/%3E%3Ccircle cx='41' cy='32' r='7' fill='%23102b2d'/%3E%3Ccircle cx='23' cy='32' r='2' fill='%23f0c875'/%3E%3Ccircle cx='41' cy='32' r='2' fill='%23f0c875'/%3E%3Cpath d='M22 42h20l4 6H18z' fill='%23102b2d'/%3E%3C/svg%3E" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23102b2d'/%3E%3Ccircle cx='32' cy='32' r='22' fill='%23f0c875'/%3E%3Ccircle cx='32' cy='32' r='17' fill='%2368898b'/%3E%3Ccircle cx='32' cy='32' r='6' fill='%23102b2d' stroke='%23fff6dc' stroke-width='3'/%3E%3Cpath d='M32 10a22 22 0 0 1 18 9L38 28z' fill='%23fff6dc' fill-opacity='.7'/%3E%3C/svg%3E" />
   <style>
     :root {
       --cream: #fff6dc;
@@ -39,6 +39,7 @@
       color: var(--cream);
       background:
         linear-gradient(180deg, rgba(4, 17, 19, 0.38), rgba(4, 17, 19, 0.12) 36%, rgba(4, 14, 16, 0.8)),
+        radial-gradient(circle at 18% 57%, rgba(255, 175, 76, 0.11), transparent 34%),
         url("assets/chaayakada-monsoon.jpg") center / cover fixed no-repeat,
         #07191d;
       font-family: var(--sans);
@@ -218,16 +219,23 @@
 
     .deck {
       position: relative;
-      width: min(360px, 100%);
+      width: 100%;
       margin: 0 auto;
-      border: 1px solid rgba(255, 246, 220, 0.28);
-      border-radius: 20px;
-      background:
-        radial-gradient(circle at 50% -20%, rgba(231, 191, 104, 0.14), transparent 56%),
-        rgba(4, 16, 18, 0.82);
       color: var(--cream);
-      box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.06);
-      padding: 13px 15px 15px;
+    }
+
+    .now-playing-panel {
+      position: relative;
+      z-index: 8;
+      width: min(390px, 100%);
+      margin: 14px 0 0 auto;
+      border: 1px solid rgba(255, 246, 220, 0.24);
+      border-radius: 16px;
+      background:
+        radial-gradient(circle at 50% -40%, rgba(231, 191, 104, 0.13), transparent 64%),
+        rgba(4, 16, 18, 0.86);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.42), inset 0 1px 0 rgba(255,255,255,.05);
+      padding: 12px 14px 13px;
       backdrop-filter: blur(18px);
     }
 
@@ -263,14 +271,14 @@
     .disc-stage {
       position: relative;
       display: grid;
-      min-height: 172px;
+      min-height: 202px;
       place-items: center;
-      padding: 3px 0 8px;
+      padding: 4px 0;
     }
 
     .disc {
       position: relative;
-      width: 164px;
+      width: 190px;
       aspect-ratio: 1;
       overflow: hidden;
       border: 1px solid rgba(255, 250, 225, 0.68);
@@ -294,6 +302,18 @@
     }
 
     .disc img[hidden] { display: none; }
+
+    .spin-marker {
+      position: absolute;
+      z-index: 3;
+      top: 13px;
+      left: calc(50% - 3px);
+      width: 6px;
+      height: 19px;
+      border-radius: 999px;
+      background: #ffe19a;
+      box-shadow: 0 0 0 2px rgba(3, 14, 16, 0.62), 0 0 12px rgba(255, 225, 154, 0.7);
+    }
 
     .disc::before {
       position: absolute;
@@ -323,9 +343,7 @@
       transform: translate(-50%, -50%);
     }
 
-    .deck[data-state="playing"] .disc { animation: disc-turn 4.8s linear infinite; }
-    .deck[data-state="loading"] .disc { animation: disc-turn 11s linear infinite; }
-    @keyframes disc-turn { to { transform: rotate(360deg); } }
+    .disc { will-change: transform; }
 
     .track-label {
       overflow: hidden;
@@ -456,6 +474,8 @@
     }
 
     .transport-button:disabled { cursor: wait; opacity: 0.42; }
+    .transport-button svg { width: 20px; height: 20px; fill: currentColor; pointer-events: none; }
+    .play-button[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--green); }
 
     .notice {
       width: min(760px, 100%);
@@ -573,6 +593,15 @@
     .song-item strong { font-size: 15px; }
     .song-item small { margin-top: 3px; color: var(--cream-dim); font-size: 11px; }
 
+    @media (min-width: 900px) {
+      .radio-room { width: min(1120px, 100%); }
+      .station {
+        width: 390px;
+        justify-self: end;
+        margin-right: clamp(0px, 3vw, 42px);
+      }
+    }
+
     @media (max-width: 700px) {
       .stage { gap: 20px; padding: 15px 12px 19px; }
       .topbar { grid-template-columns: 1fr auto; }
@@ -581,8 +610,15 @@
       .radio-room { gap: 22px; }
       h1 { font-size: clamp(56px, 18vw, 78px); }
       .era-tab { min-width: 76px; padding-inline: 9px; }
-      .deck { border-radius: 17px; padding: 10px; }
       .disc { width: 150px; }
+      .disc-stage { min-height: 160px; }
+      .now-playing-panel {
+        position: relative;
+        right: auto;
+        bottom: auto;
+        width: 100%;
+        margin-top: 9px;
+      }
       .transport { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); }
       .crate-head { align-items: start; flex-direction: column; }
       dialog { padding: 25px 18px; }
@@ -610,12 +646,12 @@
 
     <section class="radio-room" aria-labelledby="brandTitle">
       <div class="brand">
-        <p class="eyebrow">കേരളത്തിന്റെ listening room</p>
+        <p class="eyebrow">Chaaya Kada • കേരളത്തിന്റെ listening room</p>
         <h1 id="brandTitle">ചായക്കട <span>RADIO</span></h1>
       </div>
 
       <div class="station">
-        <div class="era-selector" aria-label="Choose a decade-inspired Malayalam programme">
+        <div class="era-selector" aria-label="Choose a verified Malayalam release decade">
           <button class="era-tab" type="button" data-era="80s" aria-pressed="false">80s warmth</button>
           <button class="era-tab" type="button" data-era="90s" aria-pressed="true">90s rain</button>
           <button class="era-tab" type="button" data-era="2000s" aria-pressed="false">00s night</button>
@@ -624,53 +660,56 @@
         <p class="notice" id="playerNotice" hidden></p>
 
         <article class="deck" id="deck" data-state="loading" aria-label="Chaaya Kada CD player">
-          <div class="deck-head">
-            <span id="deckModel">Chaaya Kada / CD–90</span>
-            <span class="deck-status" id="deckStatus" aria-live="polite"><span class="status-dot"></span><span>Loading the disc…</span></span>
-          </div>
-
           <div class="disc-stage" aria-hidden="true">
             <div class="disc">
               <img id="discArtwork" alt="" hidden />
+              <span class="spin-marker"></span>
             </div>
           </div>
 
-          <div class="track-label">
-            <div class="track-kicker">
-              <span id="programName">90s rain selection</span>
-              <span aria-hidden="true">•</span>
-              <span id="trackCounter">MALAYALAM / --</span>
+          <section class="now-playing-panel" aria-label="Now playing and controls">
+            <div class="deck-head">
+              <span id="deckModel">Chaaya Kada / CD–90</span>
+              <span class="deck-status" id="deckStatus" aria-live="polite"><span class="status-dot"></span><span>Loading the disc…</span></span>
             </div>
-            <h2 id="trackTitle">Finding a record…</h2>
-            <p id="trackMeta">Malayalam uploads via Audius</p>
-          </div>
 
-          <div class="timeline-row">
-            <span id="elapsed">0:00</span>
-            <label class="sr-only" for="timeline">Playback position</label>
-            <input class="timeline" id="timeline" type="range" min="0" max="100" value="0" step="0.1" disabled />
-            <span id="duration">0:00</span>
-          </div>
+            <div class="track-label">
+              <div class="track-kicker">
+                <span id="programName">90s verified selection</span>
+                <span aria-hidden="true">•</span>
+                <span id="trackCounter">MALAYALAM / --</span>
+              </div>
+              <h2 id="trackTitle">Finding a record…</h2>
+              <p id="trackMeta">Malayalam uploads via Audius</p>
+            </div>
 
-          <div class="transport">
-            <div class="utility">
-              <button class="text-button" id="browseBtn" type="button" disabled>Song list</button>
-              <button class="text-button" id="muteBtn" type="button" disabled>Mute</button>
+            <div class="timeline-row">
+              <span id="elapsed">0:00</span>
+              <label class="sr-only" for="timeline">Playback position</label>
+              <input class="timeline" id="timeline" type="range" min="0" max="100" value="0" step="0.1" disabled />
+              <span id="duration">0:00</span>
             </div>
-            <div class="controls" aria-label="CD controls">
-              <button class="transport-button" id="previousBtn" type="button" aria-label="Previous track" disabled>◀</button>
-              <button class="transport-button play-button" id="playBtn" type="button" aria-label="Play the station" disabled>▶</button>
-              <button class="transport-button" id="nextBtn" type="button" aria-label="Next track" disabled>▶</button>
+
+            <div class="transport">
+              <div class="utility">
+                <button class="text-button" id="browseBtn" type="button" disabled>Song list</button>
+                <button class="text-button" id="muteBtn" type="button" disabled>Mute</button>
+              </div>
+              <div class="controls" aria-label="CD controls">
+                <button class="transport-button" id="previousBtn" type="button" aria-label="Previous track" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14L2 12zm10 0v14l-10-7z"/></svg></button>
+                <button class="transport-button play-button" id="playBtn" type="button" aria-label="Play the station" aria-pressed="false" title="Play the station" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3v18l15-9z"/></svg></button>
+                <button class="transport-button" id="nextBtn" type="button" aria-label="Next track" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 5v14l10-7zm10 0v14l10-7z"/></svg></button>
+              </div>
+              <div class="track-actions">
+                <a class="text-link" id="openTrackLink" href="https://audius.co" target="_blank" rel="noopener">Artist page ↗</a>
+              </div>
             </div>
-            <div class="track-actions">
-              <a class="text-link" id="openTrackLink" href="https://audius.co" target="_blank" rel="noopener">Artist page ↗</a>
-            </div>
-          </div>
+          </section>
         </article>
       </div>
     </section>
 
-    <p class="footnote">Malayalam-tagged artist uploads only • official Audius API • no video embed</p>
+    <p class="footnote">Curated Malayalam works • verified original release decade • official Audius API</p>
   </main>
 
   <audio id="audioPlayer" preload="metadata"></audio>
@@ -679,7 +718,7 @@
     <button class="close" data-close="songsDialog" aria-label="Close song list">×</button>
     <h3>Malayalam song list</h3>
     <div class="crate-head">
-      <p id="crateDescription">Malayalam-tagged records selected for the 90s rain programme.</p>
+      <p id="crateDescription">Curated Malayalam works originally released during the 1990s.</p>
       <button class="refresh-button" id="refreshBtn" type="button">Refresh songs</button>
     </div>
     <div class="song-list" id="songList"></div>
@@ -689,7 +728,7 @@
     <button class="close" data-close="aboutDialog" aria-label="Close about dialog">×</button>
     <h3>Chaaya Kada Radio</h3>
     <p>An original Malayalam CD-radio experience inspired by Kerala tea shops, monsoon evenings and the focused single-station feeling of Deluxe Saloon.</p>
-    <p>The programmes evoke the warmth of the 80s, the rain-soaked melodies of the 90s and the late-night feel of the 2000s. Every result must be explicitly tagged as Malayalam (or use Malayalam script); the era labels describe the programme mood, not a verified release year.</p>
+    <p>The 80s, 90s and 2000s programmes now use a curated title-to-year catalogue. A track appears only when its original work has a verified release year inside the selected decade; unknown-year and post-2009 songs are excluded.</p>
     <p>Music is requested from the official Audius API and played directly through the browser’s standard audio player. There is no video player, scraping, downloading or stream extraction.</p>
     <p>The rotating disc uses the artwork supplied with the current track. Artists remain identified and every record links back to its Audius page. API-accessible music is governed by the <a href="https://audius.org/open-music-license.pdf" target="_blank" rel="noopener">Audius Open Music License</a>.</p>
     <p id="presenceNote">The old simulated listener number has been removed. A genuine active-listener count will appear only after a real-time presence service is connected.</p>
@@ -702,21 +741,38 @@
       room: "chaaya-kada-radio"
     });
 
+    const CURATED_TRACKS = Object.freeze([
+      { query: "aayiram kannumayi", match: /aayiram[ _+-]*kannu?ma[ay]i/i, year: 1984, source: "Nokkethadhoorathu Kannum Nattu" },
+      { query: "kilukil pambaram", match: /kilukil[ _+-]*pambaram/i, year: 1991, source: "Kilukkam" },
+      { query: "allimalar kavil", match: /allimalar[ _+-]*kavil/i, year: 1993, source: "Midhunam" },
+      { query: "etho nidrathan", match: /etho[ _+-]*nidrathan/i, year: 1998, source: "Ayal Kadha Ezhuthukayanu" },
+      { query: "nila paithale", match: /nila+[ _+-]*paithale/i, year: 1999, source: "Olympian Antony Adam" },
+      { query: "mizhiyariyathe", match: /mizhi[ _+-]*yariya+the/i, year: 1999, source: "Niram" },
+      { query: "ariyathe ariyathe", match: /^ariyathe[ _+-]*ariyathe/i, year: 2001, source: "Ravanaprabhu" },
+      { query: "vasantharavin kilivathil", match: /vasantharavin[ _+-]*kilivathil/i, year: 2002, source: "Kaiyethum Doorathu" },
+      { query: "karimizhi kuruvi", match: /karimizhi[ _+-]*kuruvi/i, year: 2002, source: "Meesa Madhavan" },
+      { query: "sundariye vaa", match: /sundh?ariye[ _+-]*vaa/i, year: 2006, source: "Chembakame" },
+      { query: "ettam pattu", match: /ettam[ _+-]*pattu/i, year: 2008, source: "Avial" }
+    ]);
+
     const PROGRAMS = Object.freeze({
       "80s": {
-        name: "80s warmth selection",
-        description: "Malayalam-tagged old-song, retro and melody uploads.",
-        queries: ["malayalam old song", "malayalam retro", "malayalam melody", "malayalam cover", "malayalam song", "malayalam acoustic", "malayalam"]
+        name: "80s verified selection",
+        description: "Curated Malayalam works originally released from 1980 through 1989.",
+        startYear: 1980,
+        endYear: 1989
       },
       "90s": {
-        name: "90s rain selection",
-        description: "Malayalam-tagged melody, acoustic and rain-room uploads.",
-        queries: ["malayalam song", "malayalam melody", "malayalam acoustic", "malayalam cover", "malayalam", "malayalam lofi"]
+        name: "90s verified selection",
+        description: "Curated Malayalam works originally released from 1990 through 1999.",
+        startYear: 1990,
+        endYear: 1999
       },
       "2000s": {
-        name: "00s night selection",
-        description: "Malayalam-tagged indie, cover and lo-fi uploads.",
-        queries: ["malayalam song", "malayalam indie", "malayalam lofi", "malayalam cover"]
+        name: "00s verified selection",
+        description: "Curated Malayalam works originally released from 2000 through 2009.",
+        startYear: 2000,
+        endYear: 2009
       }
     });
 
@@ -758,6 +814,14 @@
     let stationOffset = 0;
     let loadController;
     let presenceTimer;
+    let programRequest = 0;
+    // Keep the artwork and its marker rotating together. Playback events own
+    // this animation, independent of status messages and CSS motion resets.
+    const discRotation = document.querySelector(".disc").animate(
+      [{ transform: "rotate(0deg)" }, { transform: "rotate(360deg)" }],
+      { duration: 4800, iterations: Infinity }
+    );
+    discRotation.pause();
     const sessionId = getSessionId();
 
     function getSessionId() {
@@ -808,7 +872,13 @@
       return hash >>> 0;
     }
 
+    function ruleForTrack(track) {
+      const title = String(track?.title || "");
+      return CURATED_TRACKS.find((rule) => rule.match.test(title));
+    }
+
     function normaliseTrack(track) {
+      const rule = ruleForTrack(track);
       return {
         id: String(track.id),
         title: track.title || "Untitled record",
@@ -816,6 +886,8 @@
         genre: track.genre || "Open music",
         mood: track.mood || "Chaaya kada selection",
         duration: Number(track.duration) || 0,
+        releaseYear: rule?.year || null,
+        source: rule?.source || "Malayalam music",
         streamUrl: track.stream?.url || "",
         pageUrl: track.permalink ? `https://audius.co${track.permalink}` : "https://audius.co",
         artwork: track.artwork?.["480x480"] || track.artwork?.["150x150"] || ""
@@ -830,22 +902,15 @@
     }
 
     function isMalayalamTrack(track) {
-      const details = [
-        track?.title,
-        track?.description,
-        track?.tags,
-        track?.user?.name,
-        track?.user?.handle,
-        track?.permalink
-      ].filter(Boolean).join(" ").toLowerCase();
-      const explicitlyMalayalam = /malayalam|[\u0d00-\u0d7f]/i.test(details);
+      const rule = ruleForTrack(track);
+      if (!rule) return false;
+      const details = [track?.title, track?.description, track?.tags, track?.permalink].filter(Boolean).join(" ").toLowerCase();
       const labelledAsAnotherLanguage = /\b(tamil|hindi|telugu|kannada)\b/i.test(details);
       const title = String(track?.title || "").trim();
-      const titledAsMalayalam = /malayalam|[\u0d00-\u0d7f]|varathan|vasantharavin|nila[ _+-]*paithale|kilukil|aaka?sham|allimalar|aethu|mandharapoove|vaarthinkalee|ettam[ _-]*pattu|kanninima|mazhathullikal|jupiter[ _-]*mazha|aadiyilalo|ilayum[ _-]*poovum|yathra|mazha|kadal|kadha|aaromal|darshana|minnalkodi|ambalapuzhe/i.test(title);
-      const genericUpload = /^(song|malayalam songs?|aud[-_\s]*\d+)/i.test(title);
-      const wrongVibe = /pachai|anthem rap|bass[ _-]*boost|remix|podcast/i.test(title);
+      const wrongVibe = /pachai|anthem|\brap\b|\bclub\b|\bdj\b|\btrap\b|\bdrill\b|techno|\bedm\b|bass[ _-]*boost|remix|podcast|dance[ _-]*choreo/i.test(title);
       const nonMusicCategory = /podcast/i.test(String(track?.genre || ""));
-      return explicitlyMalayalam && titledAsMalayalam && !labelledAsAnotherLanguage && !genericUpload && !wrongVibe && !nonMusicCategory;
+      const clubGenre = /techno|trance|house|drill|trap/i.test(String(track?.genre || ""));
+      return !labelledAsAnotherLanguage && !wrongVibe && !nonMusicCategory && !clubGenre;
     }
 
     async function fetchJson(url, signal) {
@@ -860,8 +925,9 @@
       const { signal } = loadController;
       const program = PROGRAMS[era];
       const cacheBust = forceRefresh ? `&t=${Date.now()}` : "";
-      const requests = program.queries.map((query) => {
-        const url = `${CONFIG.audiusApi}/tracks/search?query=${encodeURIComponent(query)}&limit=18&app_name=Chaaya_Kada_Radio${cacheBust}`;
+      const programmeRules = CURATED_TRACKS.filter((rule) => rule.year >= program.startYear && rule.year <= program.endYear);
+      const requests = programmeRules.map((rule) => {
+        const url = `${CONFIG.audiusApi}/tracks/search?query=${encodeURIComponent(rule.query)}&limit=8&app_name=Chaaya_Kada_Radio${cacheBust}`;
         return fetchJson(url, signal);
       });
 
@@ -872,6 +938,10 @@
           .filter(usableTrack)
           .filter(isMalayalamTrack)
           .filter((track) => {
+            const rule = ruleForTrack(track);
+            return rule && rule.year >= program.startYear && rule.year <= program.endYear;
+          })
+          .filter((track) => {
             if (seen.has(track.id)) return false;
             seen.add(track.id);
             return true;
@@ -879,7 +949,7 @@
 
         return tracks
           .map(normaliseTrack)
-          .sort((a, b) => hashString(`${era}-${a.id}`) - hashString(`${era}-${b.id}`))
+          .sort((a, b) => a.releaseYear - b.releaseYear || hashString(`${era}-${a.id}`) - hashString(`${era}-${b.id}`))
           .slice(0, 18);
       } catch (error) {
         if (error.name === "AbortError") return [];
@@ -904,7 +974,7 @@
       const program = PROGRAMS[activeEra];
       dom.programName.textContent = program.name;
       dom.deckModel.textContent = `Chaaya Kada / CD–${activeEra === "2000s" ? "00" : activeEra.slice(0, 2)}`;
-      dom.crateDescription.textContent = `${program.description} The year label describes the atmosphere, not the recording date.`;
+      dom.crateDescription.textContent = `${program.description} The year shown is the original work's release year; the Audius item may be a later artist upload or cover.`;
       dom.eraButtons.forEach((button) => {
         button.setAttribute("aria-pressed", String(button.dataset.era === activeEra));
       });
@@ -914,7 +984,7 @@
       const track = currentTrack();
       if (!track) return;
       dom.trackTitle.textContent = track.title;
-      dom.trackMeta.textContent = `${track.artist} • ${track.genre} • ${track.mood}`;
+      dom.trackMeta.textContent = `${track.releaseYear} • ${track.source} • ${track.artist}`;
       dom.trackCounter.textContent = `MALAYALAM / ${String(currentIndex + 1).padStart(2, "0")}–${String(queue.length).padStart(2, "0")}`;
       dom.openTrackLink.href = track.pageUrl;
       dom.discArtwork.hidden = !track.artwork;
@@ -936,6 +1006,7 @@
 
     function loadTrack(index, options = {}) {
       if (!queue.length) return;
+      discRotation.pause();
       currentIndex = (index + queue.length) % queue.length;
       stationOffset = Number(options.offset) || 0;
       const track = currentTrack();
@@ -955,28 +1026,33 @@
     }
 
     async function loadProgram(era, forceRefresh = false) {
+      const request = ++programRequest;
+      dom.audio.pause();
+      discRotation.pause();
       activeEra = era;
       queue = [];
       updateProgramUI();
       setControls(false);
       setNotice("");
       dom.trackTitle.textContent = "Loading Malayalam records…";
-      dom.trackMeta.textContent = "Malayalam uploads via Audius";
+      dom.trackMeta.textContent = "Checking verified release years via the curated catalogue";
       dom.trackCounter.textContent = "MALAYALAM / --";
       dom.discArtwork.hidden = true;
       setStatus("Loading the disc…", "loading");
 
       try {
-        queue = await fetchProgram(era, forceRefresh);
-        if (!queue.length) throw new Error("No Malayalam-tagged playable records were returned");
+        const tracks = await fetchProgram(era, forceRefresh);
+        if (request !== programRequest) return;
+        queue = tracks;
+        if (!queue.length) throw new Error("No playable curated records were returned for this decade");
         const position = stationPosition(queue);
         loadTrack(position.index, { offset: position.offset });
         setControls(true);
         setStatus("Ready — press play", "ready");
       } catch (error) {
-        if (error.name === "AbortError") return;
+        if (request !== programRequest || error.name === "AbortError") return;
         setStatus("Music catalogue unavailable", "error");
-        setNotice("The Malayalam-only open catalogue could not be reached. Check your connection and refresh the song list.");
+        setNotice(`No verified ${era} record is currently playable from the open catalogue. Try again later or choose another decade.`);
         dom.trackTitle.textContent = "Music catalogue unavailable";
         dom.trackMeta.textContent = "The player itself is ready; the music source is temporarily offline.";
         dom.refreshBtn.disabled = false;
@@ -999,7 +1075,7 @@
         number.className = "song-number";
         number.textContent = String(index + 1).padStart(2, "0");
         title.textContent = track.title;
-        meta.textContent = `${track.artist} • ${track.genre}`;
+        meta.textContent = `${track.releaseYear} • ${track.source} • ${track.artist}`;
         play.textContent = "▶";
         play.setAttribute("aria-hidden", "true");
         copy.append(title, meta);
@@ -1098,27 +1174,39 @@
       updateProgress();
     });
 
-    dom.audio.addEventListener("play", () => {
+    dom.audio.addEventListener("playing", () => {
       setNotice("");
       setStatus("Aligned to the station clock", "playing");
-      dom.playBtn.textContent = "Ⅱ";
+      discRotation.play();
+      dom.playBtn.setAttribute("aria-pressed", "true");
       dom.playBtn.setAttribute("aria-label", "Pause the station");
+      dom.playBtn.title = "Pause the station";
       updatePresence(true);
       clearInterval(presenceTimer);
       presenceTimer = window.setInterval(() => updatePresence(true), 25000);
     });
 
     dom.audio.addEventListener("pause", () => {
+      discRotation.pause();
       setStatus("Disc paused", "paused");
-      dom.playBtn.textContent = "▶";
+      dom.playBtn.setAttribute("aria-pressed", "false");
       dom.playBtn.setAttribute("aria-label", "Play the station");
+      dom.playBtn.title = "Play the station";
       clearInterval(presenceTimer);
       updatePresence(false);
     });
 
+    dom.audio.addEventListener("waiting", () => {
+      discRotation.pause();
+      setStatus("Buffering the record…", "loading");
+    });
     dom.audio.addEventListener("timeupdate", updateProgress);
-    dom.audio.addEventListener("ended", () => loadTrack(currentIndex + 1, { autoplay: true }));
+    dom.audio.addEventListener("ended", () => {
+      discRotation.pause();
+      loadTrack(currentIndex + 1, { autoplay: true });
+    });
     dom.audio.addEventListener("error", () => {
+      discRotation.pause();
       if (!queue.length) return;
       setNotice("This record is temporarily unavailable. Moving to the next song.");
       window.setTimeout(() => loadTrack(currentIndex + 1, { autoplay: true }), 900);
