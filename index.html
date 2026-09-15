@@ -724,7 +724,7 @@
     <button class="close" data-close="aboutDialog" aria-label="Close about dialog">×</button>
     <h3>Chaaya Kada Radio</h3>
     <p>An original Malayalam CD-radio experience inspired by Kerala tea shops, monsoon evenings and the focused single-station feeling of Deluxe Saloon.</p>
-    <p>The 80s, 90s and 2000s programmes now use a curated title-to-year catalogue. A track appears only when its original work has a verified release year inside the selected decade; unknown-year and post-2009 songs are excluded.</p>
+    <p>The decades refer to each song's original film or album release, not the date of its Audius upload. This is a small selection of nostalgic Malayalam melodies; some recordings are later renditions or covers, labelled where known. Upload metadata does not authenticate an original recording.</p>
     <p>Music is requested from the official Audius API and played directly through the browser’s standard audio player. There is no video player, scraping, downloading or stream extraction.</p>
     <p>The rotating disc uses the artwork supplied with the current track. Artists remain identified and every record links back to its Audius page. API-accessible music is governed by the <a href="https://audius.org/open-music-license.pdf" target="_blank" rel="noopener">Audius Open Music License</a>.</p>
     <p id="presenceNote">The old simulated listener number has been removed. A genuine active-listener count will appear only after a real-time presence service is connected.</p>
@@ -738,17 +738,20 @@
     });
 
     const CURATED_TRACKS = Object.freeze([
-      { query: "aayiram kannumayi", match: /aayiram[ _+-]*kannu?ma[ay]i/i, year: 1984, source: "Nokkethadhoorathu Kannum Nattu" },
-      { query: "kilukil pambaram", match: /kilukil[ _+-]*pambaram/i, year: 1991, source: "Kilukkam" },
-      { query: "allimalar kavil", match: /allimalar[ _+-]*kavil/i, year: 1993, source: "Midhunam" },
-      { query: "etho nidrathan", match: /etho[ _+-]*nidrathan/i, year: 1998, source: "Ayal Kadha Ezhuthukayanu" },
-      { query: "nila paithale", match: /nila+[ _+-]*paithale/i, year: 1999, source: "Olympian Antony Adam" },
-      { query: "mizhiyariyathe", match: /mizhi[ _+-]*yariya+the/i, year: 1999, source: "Niram" },
-      { query: "ariyathe ariyathe", match: /^ariyathe[ _+-]*ariyathe/i, year: 2001, source: "Ravanaprabhu" },
-      { query: "vasantharavin kilivathil", match: /vasantharavin[ _+-]*kilivathil/i, year: 2002, source: "Kaiyethum Doorathu" },
-      { query: "karimizhi kuruvi", match: /karimizhi[ _+-]*kuruvi/i, year: 2002, source: "Meesa Madhavan" },
-      { query: "sundariye vaa", match: /sundh?ariye[ _+-]*vaa/i, year: 2006, source: "Chembakame" },
-      { query: "ettam pattu", match: /ettam[ _+-]*pattu/i, year: 2008, source: "Avial" }
+      // Pin reviewed upload IDs as well as titles: a fuzzy search result must
+      // never acquire a release year merely because its title looks similar.
+      // Film/album year sources and recording caveats: CATALOGUE-AUDIT.md.
+      { id: "P5MGWl1", title: "Aayiram Kannumayi", match: /aayiram[ _+-]*kannu?ma[ay]i/i, year: 1985, source: "Nokkethadhoorathu Kannum Nattu", version: "Later rendition" },
+      { id: "wk6bpZr", title: "Onnam Ragam Paadi", match: /onnam[ _+-]*ragam/i, year: 1987, source: "Thoovanathumbikal" },
+      { id: "YR0PVzK", title: "Chandana Manivathil", match: /chandana[ _+-]*manivathil/i, year: 1988, source: "Marikkunnilla Njan" },
+      { id: "No92ovQ", title: "Kanneer Poovinte", match: /kanneer[ _+-]*poovinte/i, year: 1989, source: "Kireedam" },
+      { id: "Ea9RdMo", title: "Kilukil Pambaram", match: /kilukil[ _+-]*pambaram/i, year: 1991, source: "Kilukkam" },
+      { id: "AlmMpvR", title: "Allimalar Kavil", match: /allimalar[ _+-]*kavil/i, year: 1993, source: "Midhunam" },
+      { id: "6YXp3", title: "Pinneyum Pinneyum", match: /pinneyum[ _+-]*pinneyum/i, year: 1997, source: "Krishnagudiyil Oru Pranayakalathu" },
+      { id: "Zrq2jaE", title: "Nila Paithale", match: /nila+[ _+-]*paithale/i, year: 1999, source: "Olympian Antony Adam", version: "Cover" },
+      { id: "3R3wBpV", title: "Marannittumenthino", match: /marannittumenthino/i, year: 2001, source: "Randam Bhavam" },
+      { id: "XBqrv47", title: "Oru Chembaneer", match: /oru[ _+-]*chembaneer/i, year: 2003, source: "Sthithi" },
+      { id: "5KoxN7J", title: "Sundariye Vaa", match: /sundh?ariye[ _+-]*vaa/i, year: 2006, source: "Chembakame" }
     ]);
 
     const PROGRAMS = Object.freeze({
@@ -870,14 +873,14 @@
 
     function ruleForTrack(track) {
       const title = String(track?.title || "");
-      return CURATED_TRACKS.find((rule) => rule.match.test(title));
+      return CURATED_TRACKS.find((rule) => rule.id === String(track?.id) && rule.match.test(title));
     }
 
     function normaliseTrack(track) {
       const rule = ruleForTrack(track);
       return {
         id: String(track.id),
-        title: track.title || "Untitled record",
+        title: rule ? `${rule.title}${rule.version ? ` (${rule.version.toLowerCase()})` : ""}` : track.title || "Untitled record",
         artist: track.user?.name || track.user?.handle || "Independent artist",
         genre: track.genre || "Open music",
         mood: track.mood || "Chaaya kada selection",
@@ -903,9 +906,9 @@
       const details = [track?.title, track?.description, track?.tags, track?.permalink].filter(Boolean).join(" ").toLowerCase();
       const labelledAsAnotherLanguage = /\b(tamil|hindi|telugu|kannada)\b/i.test(details);
       const title = String(track?.title || "").trim();
-      const wrongVibe = /pachai|anthem|\brap\b|\bclub\b|\bdj\b|\btrap\b|\bdrill\b|techno|\bedm\b|bass[ _-]*boost|remix|podcast|dance[ _-]*choreo/i.test(title);
+      const wrongVibe = /pachai|anthem|\brap\b|\bclub\b|\bdj\b|\btrap\b|\bdrill\b|techno|\bedm\b|bass[ _-]*boost|remix|lo[ -]?fi|slowed|sped[ _-]*up|podcast|dance[ _-]*choreo/i.test(title);
       const nonMusicCategory = /podcast/i.test(String(track?.genre || ""));
-      const clubGenre = /techno|trance|house|drill|trap/i.test(String(track?.genre || ""));
+      const clubGenre = /techno|trance|house|drill|trap|hip[ -]?hop|rap/i.test(String(track?.genre || ""));
       return !labelledAsAnotherLanguage && !wrongVibe && !nonMusicCategory && !clubGenre;
     }
 
@@ -923,12 +926,15 @@
       const cacheBust = forceRefresh ? `&t=${Date.now()}` : "";
       const programmeRules = CURATED_TRACKS.filter((rule) => rule.year >= program.startYear && rule.year <= program.endYear);
       const requests = programmeRules.map((rule) => {
-        const url = `${CONFIG.audiusApi}/tracks/search?query=${encodeURIComponent(rule.query)}&limit=8&app_name=Chaaya_Kada_Radio${cacheBust}`;
+        const url = `${CONFIG.audiusApi}/tracks/${rule.id}?app_name=Chaaya_Kada_Radio${cacheBust}`;
         return fetchJson(url, signal);
       });
 
       try {
-        const payloads = await Promise.all(requests);
+        const results = await Promise.allSettled(requests);
+        if (signal.aborted) throw new DOMException("Catalogue request cancelled", "AbortError");
+        const payloads = results.filter((result) => result.status === "fulfilled").map((result) => result.value);
+        if (!payloads.length) throw new Error("Music catalogue unavailable");
         const seen = new Set();
         const tracks = payloads.flatMap((payload) => payload.data || [])
           .filter(usableTrack)
@@ -980,7 +986,7 @@
       const track = currentTrack();
       if (!track) return;
       dom.trackTitle.textContent = track.title;
-      dom.trackMeta.textContent = `${track.releaseYear} • ${track.source} • ${track.artist}`;
+      dom.trackMeta.textContent = `${track.releaseYear} song • ${track.source} • ${track.artist}`;
       dom.trackCounter.textContent = `MALAYALAM / ${String(currentIndex + 1).padStart(2, "0")}–${String(queue.length).padStart(2, "0")}`;
       dom.openTrackLink.href = track.pageUrl;
       dom.discArtwork.hidden = !track.artwork;
