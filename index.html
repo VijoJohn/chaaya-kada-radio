@@ -181,7 +181,6 @@
     }
 
     .station { display: grid; gap: 11px; }
-    .brand .era-selector { margin-top: 24px; }
 
     .era-selector {
       display: flex;
@@ -471,6 +470,9 @@
     .transport-button:disabled { cursor: wait; opacity: 0.42; }
     .transport-button svg { width: 20px; height: 20px; fill: currentColor; pointer-events: none; }
     .play-button[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--green); }
+    .play-button .pause-icon { display: none; }
+    .play-button[aria-pressed="true"] .play-icon { display: none; }
+    .play-button[aria-pressed="true"] .pause-icon { display: inline; }
 
     .notice {
       width: min(760px, 100%);
@@ -645,15 +647,14 @@
       <div class="brand">
         <p class="eyebrow">Chaaya Kada • കേരളത്തിന്റെ listening room</p>
         <h1 id="brandTitle">ചായക്കട <span>RADIO</span></h1>
+      </div>
+
+      <div class="station">
         <div class="era-selector" aria-label="Choose a verified Malayalam release decade">
           <button class="era-tab" type="button" data-era="80s" aria-pressed="false">80s warmth</button>
           <button class="era-tab" type="button" data-era="90s" aria-pressed="true">90s rain</button>
           <button class="era-tab" type="button" data-era="2000s" aria-pressed="false">00s night</button>
         </div>
-      </div>
-
-      <div class="station">
-
         <p class="notice" id="playerNotice" hidden></p>
 
         <article class="deck" id="deck" data-state="loading" aria-label="Chaaya Kada CD player">
@@ -694,7 +695,7 @@
               </div>
               <div class="controls" aria-label="CD controls">
                 <button class="transport-button" id="previousBtn" type="button" aria-label="Previous track" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14L2 12zm10 0v14l-10-7z"/></svg></button>
-                <button class="transport-button play-button" id="playBtn" type="button" aria-label="Play the station" aria-pressed="false" title="Play the station" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3v18l15-9z"/></svg></button>
+                <button class="transport-button play-button" id="playBtn" type="button" aria-label="Play the station" aria-pressed="false" title="Play the station" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path class="play-icon" d="M7 3v18l15-9z"/><path class="pause-icon" d="M5 4h5v16H5zm9 0h5v16h-5z"/></svg></button>
                 <button class="transport-button" id="nextBtn" type="button" aria-label="Next track" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 5v14l10-7zm10 0v14l10-7z"/></svg></button>
               </div>
               <div class="track-actions">
@@ -723,11 +724,10 @@
   <dialog id="aboutDialog">
     <button class="close" data-close="aboutDialog" aria-label="Close about dialog">×</button>
     <h3>Chaaya Kada Radio</h3>
-    <p>An original Malayalam CD-radio experience inspired by Kerala tea shops, monsoon evenings and the focused single-station feeling of Deluxe Saloon.</p>
-    <p>The decades refer to each song's original film or album release, not the date of its Audius upload. This is a small selection of nostalgic Malayalam melodies; some recordings are later renditions or covers, labelled where known. Upload metadata does not authenticate an original recording.</p>
-    <p>Music is requested from the official Audius API and played directly through the browser’s standard audio player. There is no video player, scraping, downloading or stream extraction.</p>
-    <p>The rotating disc uses the artwork supplied with the current track. Artists remain identified and every record links back to its Audius page. API-accessible music is governed by the <a href="https://audius.org/open-music-license.pdf" target="_blank" rel="noopener">Audius Open Music License</a>.</p>
-    <p id="presenceNote">The old simulated listener number has been removed. A genuine active-listener count will appear only after a real-time presence service is connected.</p>
+    <p>Malayalam melodies for a slow evening at the chaaya kada. Inspired by Kerala tea shops, warm glasses of tea and monsoon memories.</p>
+    <p>Choose the 80s, 90s or 2000s. Decades follow the original film or album year; known covers and later renditions are labelled.</p>
+    <p>Music and artwork are provided through Audius. Use Artist page to explore the current recording and its uploader.</p>
+    <p id="presenceNote" hidden></p>
   </dialog>
 
   <script>
@@ -1126,6 +1126,7 @@
         const count = Math.max(0, Number(data.listeners) || 0);
         dom.listenerReadout.textContent = `${count} ${count === 1 ? "listener" : "listeners"} now`;
         dom.presenceNote.textContent = "The listener number is supplied by a live presence service and counts active listening sessions.";
+        dom.presenceNote.hidden = false;
       } catch (_) {
         dom.listenerReadout.textContent = active ? "You are listening" : "Live room";
       }
@@ -1176,13 +1177,20 @@
       updateProgress();
     });
 
+    function updatePlaybackButton(active) {
+      const label = active ? "Pause the station" : "Play the station";
+      dom.playBtn.setAttribute("aria-pressed", String(active));
+      dom.playBtn.setAttribute("aria-label", label);
+      dom.playBtn.title = label;
+    }
+
+    dom.audio.addEventListener("play", () => updatePlaybackButton(true));
+    dom.audio.addEventListener("emptied", () => updatePlaybackButton(false));
     dom.audio.addEventListener("playing", () => {
       setNotice("");
       setStatus("Aligned to the station clock", "playing");
       discRotation.play();
-      dom.playBtn.setAttribute("aria-pressed", "true");
-      dom.playBtn.setAttribute("aria-label", "Pause the station");
-      dom.playBtn.title = "Pause the station";
+      updatePlaybackButton(true);
       updatePresence(true);
       clearInterval(presenceTimer);
       presenceTimer = window.setInterval(() => updatePresence(true), 25000);
@@ -1191,9 +1199,7 @@
     dom.audio.addEventListener("pause", () => {
       discRotation.pause();
       setStatus("Disc paused", "paused");
-      dom.playBtn.setAttribute("aria-pressed", "false");
-      dom.playBtn.setAttribute("aria-label", "Play the station");
-      dom.playBtn.title = "Play the station";
+      updatePlaybackButton(false);
       clearInterval(presenceTimer);
       updatePresence(false);
     });
@@ -1205,10 +1211,12 @@
     dom.audio.addEventListener("timeupdate", updateProgress);
     dom.audio.addEventListener("ended", () => {
       discRotation.pause();
+      updatePlaybackButton(false);
       loadTrack(currentIndex + 1, { autoplay: true });
     });
     dom.audio.addEventListener("error", () => {
       discRotation.pause();
+      updatePlaybackButton(false);
       if (!queue.length) return;
       setNotice("This record is temporarily unavailable. Moving to the next song.");
       window.setTimeout(() => loadTrack(currentIndex + 1, { autoplay: true }), 900);

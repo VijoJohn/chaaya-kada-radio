@@ -1,6 +1,6 @@
 # Chaaya Kada - Radio
 
-A compact Malayalam CD-radio inspired by Kerala chaaya-kada culture and the focused single-station composition of Deluxe Saloon. The title and decade selector sit above the tea shop. A small free-standing artwork disc and lean, box-free controls sit along the bottom, leaving the counter and seating visible.
+A compact Malayalam CD-radio inspired by Kerala chaaya-kada culture and the focused single-station composition of Deluxe Saloon. The title sits above the tea shop. The decade selector sits just above a small free-standing artwork disc and lean, box-free controls along the bottom, leaving the counter and seating visible. The centre button shows pause bars during playback and a play arrow when paused or stopped.
 
 Playback uses Malayalam-tagged artist uploads returned by the official Audius API. The site contains no YouTube embed, scraping, downloading, stream extraction, proxy, or bundled music files.
 
