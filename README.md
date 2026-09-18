@@ -10,6 +10,19 @@ https://vijojohn.github.io/chaaya-kada-radio/
 
 No installation, account, API key, or build step is required.
 
+## Playback
+
+Press Play once to begin. Changing decades while listening continues playback;
+changing decades while paused keeps the player paused. A browser may still require
+another tap on Play after a switch.
+
+If an audio server fails or buffers for 15 seconds, the player retries the same
+song once through the official Audius streaming endpoint. If that also fails,
+it stops with a retry/next-song message instead of looping through the catalogue.
+Availability depends on the external audio source.
+
+Run the offline playback regression checks with `node --test playback.test.cjs`.
+
 ## Catalogue notes
 
 - The 80s, 90s, and 2000s switches use reviewed upload IDs and title checks, with original film/album years. Known covers and later renditions are labelled.

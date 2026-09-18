@@ -814,6 +814,10 @@
     let loadController;
     let presenceTimer;
     let programRequest = 0;
+    let playbackWanted = false;
+    let trackRequest = 0;
+    let streamRetried = false;
+    let playbackTimer;
     // Keep the artwork and its marker rotating together. Playback events own
     // this animation, independent of status messages and CSS motion resets.
     const discRotation = document.querySelector(".disc").animate(
@@ -1006,9 +1010,76 @@
       });
     }
 
+    function clearPlaybackTimer() {
+      window.clearTimeout(playbackTimer);
+    }
+
+    function watchPlayback(request = trackRequest) {
+      clearPlaybackTimer();
+      if (!playbackWanted) return;
+      playbackTimer = window.setTimeout(() => {
+        if (request === trackRequest && playbackWanted) recoverStream(request);
+      }, 15000);
+    }
+
+    function startPlayback(request = trackRequest) {
+      playbackWanted = true;
+      watchPlayback(request);
+      dom.audio.play().catch((error) => {
+        if (request !== trackRequest || !playbackWanted || error.name === "AbortError") return;
+        if (error.name === "NotAllowedError") {
+          playbackWanted = false;
+          clearPlaybackTimer();
+          updatePlaybackButton(false);
+          setStatus("Ready — press play", "ready");
+          setNotice("Your browser needs a tap on Play to start this record.");
+        } else {
+          recoverStream(request);
+        }
+      });
+    }
+
+    function pausePlayback() {
+      playbackWanted = false;
+      clearPlaybackTimer();
+      dom.audio.pause();
+      updatePlaybackButton(false);
+    }
+
+    function recoverStream(request = trackRequest) {
+      if (request !== trackRequest || !currentTrack()) return;
+      clearPlaybackTimer();
+      discRotation.pause();
+      updatePlaybackButton(false);
+      // Retry only once, through Audius's official redirect endpoint. This
+      // obtains a current stream instead of reusing an expired signed URL.
+      if (!streamRetried && playbackWanted) {
+        streamRetried = true;
+        const offset = stationOffset || dom.audio.currentTime || 0;
+        const retryRequest = ++trackRequest;
+        dom.audio.src = `${CONFIG.audiusApi}/tracks/${currentTrack().id}/stream?app_name=Chaaya_Kada_Radio&t=${Date.now()}`;
+        stationOffset = offset;
+        dom.audio.load();
+        setStatus("Reconnecting the record…", "loading");
+        setNotice("The audio server is taking too long. Retrying this song…");
+        startPlayback(retryRequest);
+        return;
+      }
+      playbackWanted = false;
+      ++trackRequest;
+      dom.audio.pause();
+      setStatus("Record unavailable", "error");
+      setNotice("This audio source is unavailable right now. Press Play to retry, or choose the next song.");
+    }
+
     function loadTrack(index, options = {}) {
       if (!queue.length) return;
+      const request = ++trackRequest;
+      clearPlaybackTimer();
+      streamRetried = false;
+      playbackWanted = Boolean(options.autoplay);
       discRotation.pause();
+      setNotice("");
       currentIndex = (index + queue.length) % queue.length;
       stationOffset = Number(options.offset) || 0;
       const track = currentTrack();
@@ -1019,17 +1090,18 @@
       dom.duration.textContent = formatTime(track.duration);
       updateTrackUI();
       setStatus(options.autoplay ? "Spinning up the disc…" : "Ready — press play", "loading");
-      if (options.autoplay) {
-        dom.audio.play().catch(() => {
-          setStatus("Ready — press play", "ready");
-          setNotice("Your browser paused automatic playback. Press play to continue.");
-        });
-      }
+      if (options.autoplay) startPlayback(request);
     }
 
     async function loadProgram(era, forceRefresh = false) {
       const request = ++programRequest;
+      // Keep listening across decade changes, including rapid repeated clicks.
+      // The media element's pause during loading must not erase this intent.
+      ++trackRequest;
+      clearPlaybackTimer();
       dom.audio.pause();
+      dom.audio.removeAttribute("src");
+      dom.audio.load();
       discRotation.pause();
       activeEra = era;
       queue = [];
@@ -1048,11 +1120,12 @@
         queue = tracks;
         if (!queue.length) throw new Error("No playable curated records were returned for this decade");
         const position = stationPosition(queue);
-        loadTrack(position.index, { offset: position.offset });
+        loadTrack(position.index, { offset: position.offset, autoplay: playbackWanted });
         setControls(true);
-        setStatus("Ready — press play", "ready");
+        if (!playbackWanted) setStatus("Ready — press play", "ready");
       } catch (error) {
         if (request !== programRequest || error.name === "AbortError") return;
+        playbackWanted = false;
         setStatus("Music catalogue unavailable", "error");
         setNotice(`No verified ${era} record is currently playable from the open catalogue. Try again later or choose another decade.`);
         dom.trackTitle.textContent = "Music catalogue unavailable";
@@ -1092,10 +1165,14 @@
 
     function togglePlayback() {
       if (!queue.length) return;
-      if (dom.audio.paused) {
-        dom.audio.play().catch(() => setNotice("Playback could not start. Try another record from the song list."));
+      if (!playbackWanted) {
+        if (dom.audio.error || dom.deck.dataset.state === "error") {
+          loadTrack(currentIndex, { autoplay: true, offset: dom.audio.currentTime });
+        } else {
+          startPlayback();
+        }
       } else {
-        dom.audio.pause();
+        pausePlayback();
       }
     }
 
@@ -1187,6 +1264,8 @@
     dom.audio.addEventListener("play", () => updatePlaybackButton(true));
     dom.audio.addEventListener("emptied", () => updatePlaybackButton(false));
     dom.audio.addEventListener("playing", () => {
+      clearPlaybackTimer();
+      playbackWanted = true;
       setNotice("");
       setStatus("Aligned to the station clock", "playing");
       discRotation.play();
@@ -1198,7 +1277,7 @@
 
     dom.audio.addEventListener("pause", () => {
       discRotation.pause();
-      setStatus("Disc paused", "paused");
+      if (!playbackWanted && dom.deck.dataset.state !== "error") setStatus("Disc paused", "paused");
       updatePlaybackButton(false);
       clearInterval(presenceTimer);
       updatePresence(false);
@@ -1207,6 +1286,7 @@
     dom.audio.addEventListener("waiting", () => {
       discRotation.pause();
       setStatus("Buffering the record…", "loading");
+      watchPlayback();
     });
     dom.audio.addEventListener("timeupdate", updateProgress);
     dom.audio.addEventListener("ended", () => {
@@ -1215,16 +1295,12 @@
       loadTrack(currentIndex + 1, { autoplay: true });
     });
     dom.audio.addEventListener("error", () => {
-      discRotation.pause();
-      updatePlaybackButton(false);
-      if (!queue.length) return;
-      setNotice("This record is temporarily unavailable. Moving to the next song.");
-      window.setTimeout(() => loadTrack(currentIndex + 1, { autoplay: true }), 900);
+      if (dom.audio.error) recoverStream();
     });
 
     if ("mediaSession" in navigator) {
-      navigator.mediaSession.setActionHandler("play", () => dom.audio.play());
-      navigator.mediaSession.setActionHandler("pause", () => dom.audio.pause());
+      navigator.mediaSession.setActionHandler("play", () => { if (!playbackWanted) togglePlayback(); });
+      navigator.mediaSession.setActionHandler("pause", pausePlayback);
       navigator.mediaSession.setActionHandler("previoustrack", () => changeTrack(-1));
       navigator.mediaSession.setActionHandler("nexttrack", () => changeTrack(1));
     }
