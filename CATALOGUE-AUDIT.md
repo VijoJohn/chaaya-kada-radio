@@ -1,4 +1,34 @@
-# Catalogue audit — 15 September 2026
+# Catalogue audit — updated 18 September 2026
+
+## Expansion — 18 September 2026
+
+Added 13 works for a total of **24: eight 80s, eight 90s and eight 2000s**. The original audit below is retained as history. No UI, playback logic, provider or decade boundaries changed.
+
+Selection favours warm melodic vocals, gentle/folk-coloured duets and reflective monsoon-evening songs. This is a curation judgment based on the identified works and upload metadata, not a claim that every upload has been listened to in full or authenticated as an original master. The existing uploader attribution is retained. Pavizham Pol is explicitly labelled as a cover.
+
+| Added work | Film year used | Year/identity reference | Audius ID | Why it fits |
+| --- | --- | --- | --- | --- |
+| Pavizham Pol (cover) | Namukku Parkkan Munthirithoppukal, 1986 | [Soundtrack metadata](https://music.apple.com/us/song/1595230077) | 4g0qOa | Gentle Johnson melody; uploader explicitly says cover, not original movie recording. |
+| Poomukha Vathilkkal | Rakkuyilin Ragasadassil, 1986 | [Film-song catalogue](https://www.malayalachalachithram.com/movie.php?i=1900&ln=en) | 9OXd0 | Familiar, unhurried domestic nostalgia. Upload names the film. |
+| Ethra Pookkalamini | Rakkuyilin Ragasadassil, 1986 | [Film-song catalogue](https://www.malayalachalachithram.com/movie.php?i=1900&ln=en) | MYro6V | Soft, reflective melody. Upload names the film. |
+| Pallitherundo | Mazhavilkavadi, 1989 | [Label's film/song credits](https://www.youtube.com/watch?v=_gzGDfC6RxA) | YKR77Zv | Playful folk-coloured nostalgia. Upload names the film. |
+| Maaya Manjalil | Ottayal Pattalam, 1991 | [Soundtrack metadata](https://music.apple.com/us/song/1743409217) | OWJxqWz | Lilting, warm romantic melody. Some reissue listings say 1992; the original-film catalogue and cited soundtrack use 1991. |
+| Raajahamsame | Chamayam, 1993 | [Film-song catalogue](https://www.malayalachalachithram.com/song.php?i=10328) | JEx7vr7 | Expressive Johnson melody for reflective listening. Upload names the film. |
+| Oru Rathri Koodi | Summer in Bethlehem, 1998 | [Film-song catalogue](https://www.malayalachalachithram.com/song.php?i=12965) | w7wrl5 | Unhurried evening nostalgia. |
+| Doore Oru Thaaram | Meenathil Thalikettu, 1998 | [Soundtrack metadata](https://music.apple.com/us/song/1728286929) | m6W4NKp | Gentle romantic melody. |
+| Kaatte Nee Veesaruthippol | Kaattu Vannu Vilichappol, 2001 | [Soundtrack metadata](https://music.apple.com/us/song/1728455249) | pGMBB | Soft, breeze-like melody. Upload names the film and singer. |
+| Nee Manimukilaadakal | Vellithira, 2003 | [Label's film/song credits](https://www.youtube.com/watch?v=uMk6Y1YLzVc) | 83G64qO | Long-form, flowing romantic melody. |
+| Kallai Kadavathu | Perumazhakkalam, 2004 | [Film-song catalogue](https://www.malayalachalachithram.com/song.php?i=8525&ln=ml) | 4jYo8v9 | Folk-coloured duet with a Kerala riverside feel. |
+| Junile Nilamazhayil | Nammal Thammil, 2009 | [Label-supplied soundtrack metadata](https://music.amazon.in/tracks/B0F8X8V4QY) | 4jy5zq9 | Monsoon romance; uses the film's 2009 release year, not its earlier production date. |
+| Mazha Njanarinjirunnilla | Dr. Patient, 2009 | [Film-song catalogue](https://www.malayalachalachithram.com/song.php?i=16997) | oWMBa | Rainy-evening Hariharan melody. Upload names Dr. Patient; not the unrelated film Mazha. |
+
+All 13 metadata records were streamable and non-gated. Small range requests were used to check audio responses without saving music. Three primary servers initially failed (Pallitherundo, Maaya Manjalil, Kallai Kadavathu); their official Audius `/tracks/{id}/stream` recovery requests returned HTTP 206 `audio/mpeg`. The existing player already retries via this endpoint. External availability can still change.
+
+Final full-catalogue check: **24/24** records passed the actual player filters and returned HTTP 206 `audio/mpeg` responses, with eight accepted records in each decade and no failures. These are metadata and partial-response checks, not full-song listening tests. Re-run with `node check-catalogue.cjs` (network access required).
+
+Ottathumbi was considered but excluded: the identifiable Shankar Mahadevan/KS Chithra song is from **Pullipulikalum Aattinkuttiyum (2013)**, outside this station's decades ([Sony Music credits](https://www.youtube.com/watch?v=k5yVJ2Sz8pY)). Thumbi Vaa, Unarumee, Thenum Vayambum and Mizhiyoram searches did not return suitable playable versions; no placeholders were added.
+
+API availability is not proof of an uploader's rights. This expansion uses only the existing official API streaming mechanism; it neither downloads/bundles music nor represents these recordings as public-domain or open-licensed.
 
 ## Result
 
